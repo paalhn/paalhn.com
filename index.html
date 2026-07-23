@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>paalhn</title>
+<meta name="description" content="paalhn.com">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #FFFFFF;
+    --ink: #1A1A1A;
+    --graphite: #8C8C87;
+    --line: #E9E8E4;
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{ color:inherit; }
+
+  .noise-overlay{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    background-image:url('static.gif');
+    background-repeat:repeat;
+    opacity:0.035;
+    mix-blend-mode:multiply;
+    pointer-events:none;
+    z-index:999;
+  }
+
+  .wrap{
+    max-width:640px;
+    margin:0 auto;
+    padding:0 24px;
+  }
+
+  /* ---------- header ---------- */
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:40px 0 14px;
+    position:relative;
+    box-shadow: 0 14px 22px -16px rgba(26,26,26,0.22);
+  }
+  header img{ height:19px; display:block; }
+  nav{
+    font-size:13px;
+    display:flex;
+    gap:24px;
+  }
+  nav a{ text-decoration:none; color:var(--graphite); transition:color .15s; }
+  nav a:hover{ color:var(--ink); }
+
+  /* ---------- hero ---------- */
+  .hero{ padding:18px 0 20px; }
+  .hero h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:500;
+    font-size:clamp(32px, 6vw, 42px);
+    line-height:1.1;
+    margin:0;
+    letter-spacing:-0.01em;
+    min-height:1.1em;
+  }
+  .rotator-word{
+    display:inline-block;
+    opacity:1;
+    transform:translateY(0);
+    transition:opacity .4s ease, transform .4s ease;
+  }
+  .rotator-word.out{
+    opacity:0;
+    transform:translateY(-10px);
+  }
+  .rotator-word.jump{
+    transition:none;
+    opacity:0;
+    transform:translateY(10px);
+  }
+
+  /* ---------- section labels ---------- */
+  .eyebrow{
+    font-size:12px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--graphite);
+    margin:0 0 18px;
+  }
+
+  /* ---------- game panel ---------- */
+  .game-section{ padding:0 0 64px; }
+  .panel{
+    max-width:440px;
+    margin:0 auto;
+    padding:0;
+    transition:opacity .4s ease;
+  }
+  .panel.hide{ opacity:0; }
+  .panel-head{
+    display:none;
+    justify-content:flex-end;
+    align-items:baseline;
+    padding:0 0 14px;
+    color:var(--ink);
+  }
+  .score{
+    font-size:14px;
+    letter-spacing:0.02em;
+    font-weight:500;
+    color:var(--graphite);
+  }
+  .score span{ color:var(--ink); }
+
+  .stage{
+    position:relative;
+    width:100%;
+    aspect-ratio: 1 / 1;
+  }
+  .welcome{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:26px;
+    background:var(--paper);
+    border:1px solid transparent;
+    text-align:center;
+    transition:opacity .4s ease;
+  }
+  .welcome.hide{ opacity:0; pointer-events:none; }
+  .welcome h2{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:500;
+    font-size:clamp(34px, 7vw, 46px);
+    letter-spacing:-0.01em;
+    margin:0;
+  }
+  .welcome-sub{
+    display:none;
+    font-size:15.5px;
+    color:var(--graphite);
+    margin:-16px 0 0;
+  }
+  .welcome button{
+    font-family:'Inter', sans-serif;
+    font-size:13.5px;
+    letter-spacing:0.02em;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    border-radius:10px;
+    padding:13px 30px;
+    cursor:pointer;
+    opacity:0;
+    transform:translateY(4px);
+    pointer-events:none;
+    transition:opacity .5s ease, transform .5s ease, background-color .15s;
+  }
+  .welcome button.show{ opacity:1; transform:translateY(0); pointer-events:auto; }
+  .welcome button:hover{ opacity:0.85 !important; }
+
+  .welcome-actions{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+  }
+  .ghost-btn{
+    font-family:'Inter', sans-serif;
+    font-size:12px;
+    letter-spacing:0.02em;
+    background:transparent;
+    color:var(--ink);
+    border:1.5px solid var(--ink);
+    border-radius:9px;
+    padding:8px 16px;
+    cursor:pointer;
+    transition:background-color .15s, opacity .15s;
+  }
+  .ghost-btn:hover{ background:rgba(26,26,26,0.06); }
+
+  #pong{
+    display:block;
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    background:var(--paper);
+    border:1px solid transparent;
+    cursor:none;
+    touch-action:none;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .4s ease;
+  }
+  #pong.show{ opacity:1; pointer-events:auto; }
+
+  .point-msg{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:500;
+    font-size:24px;
+    color:var(--ink);
+    background:var(--paper);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .4s ease;
+  }
+  .point-msg.show{ opacity:1; }
+
+  .panel-foot{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:14px 0 0;
+    font-size:12.5px;
+    color:var(--graphite);
+    min-height:20px;
+  }
+  .panel-foot button{
+    font-family:'Inter', sans-serif;
+    font-size:12px;
+    letter-spacing:0.02em;
+    background:transparent;
+    color:var(--graphite);
+    border:none;
+    border-bottom:1px solid var(--line);
+    padding:0 0 1px;
+    cursor:pointer;
+    transition:color .15s, border-color .15s;
+  }
+  .panel-foot button:hover{ color:var(--ink); border-color:var(--ink); }
+
+  /* ---------- contact ---------- */
+  .contact-section{
+    display:none;
+    opacity:0;
+    max-width:480px;
+    margin:48px auto 0;
+    scroll-margin-top:32px;
+    transition:opacity .6s ease;
+  }
+  .contact-section.revealed{ display:block; }
+  .contact-section.show{ opacity:1; }
+  .contact-box{
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:32px 28px;
+  }
+  .contact-box-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:16px;
+  }
+  .contact-section h2{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:500;
+    font-size:22px;
+    margin:0 0 8px;
+  }
+  .text-link{
+    font-family:'Inter', sans-serif;
+    font-size:12.5px;
+    letter-spacing:0.02em;
+    background:none;
+    color:var(--graphite);
+    border:none;
+    border-bottom:1px solid var(--line);
+    padding:0 0 1px;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:color .15s, border-color .15s;
+  }
+  .text-link:hover{ color:var(--ink); border-color:var(--ink); }
+  .contact-section p{
+    color:var(--graphite);
+    margin:0 0 30px;
+    font-size:15px;
+  }
+  .contact-section.pulse{ animation:pulseGlow 1.2s ease; }
+  @keyframes pulseGlow{
+    0%{ opacity:0.3; }
+    100%{ opacity:1; }
+  }
+  form{
+    display:grid;
+    gap:18px;
+  }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  label{
+    font-size:12px;
+    letter-spacing:0.03em;
+    color:var(--graphite);
+    display:block;
+    margin-bottom:7px;
+  }
+  input, textarea{
+    width:100%;
+    font-family:'Inter', sans-serif;
+    font-size:15px;
+    color:var(--ink);
+    background:transparent;
+    border:none;
+    border-bottom:1px solid var(--line);
+    border-radius:0;
+    padding:8px 0;
+    outline:none;
+    transition:border-color .15s;
+  }
+  input:focus, textarea:focus{
+    border-color:var(--ink);
+  }
+  textarea{ resize:vertical; min-height:90px; font-family:'Inter', sans-serif; }
+  .hp{ position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
+
+  .submit-row{ display:flex; align-items:center; gap:16px; margin-top:6px; }
+  button.send{
+    font-family:'Inter', sans-serif;
+    font-size:13px;
+    letter-spacing:0.02em;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    border-radius:2px;
+    padding:12px 20px;
+    cursor:pointer;
+    transition:opacity .15s, transform .1s;
+  }
+  button.send:hover{ opacity:0.8; }
+  button.send:active{ transform:translateY(1px); }
+  button.send:disabled{ opacity:0.4; cursor:default; }
+  .status{
+    font-size:12.5px;
+    color:var(--graphite);
+  }
+  .status.ok{ color:var(--ink); }
+  .status.err{ color:#B23A2E; }
+
+  /* ---------- footer ---------- */
+  footer{
+    border-top:1px solid var(--line);
+    padding:24px 0 48px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:12px;
+    color:var(--graphite);
+  }
+  footer img{ height:12px; opacity:0.4; }
+
+  @media (max-width:520px){
+    .row2{ grid-template-columns:1fr; }
+    header img{ height:16px; }
+  }
+</style>
+</head>
+<body>
+<div class="noise-overlay" aria-hidden="true"></div>
+
+<div class="wrap">
+  <header>
+    <img src="logo.png" alt="paalhn">
+    <nav>
+      <a href="#play">Play</a>
+      <a href="#contact" id="navContact">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1><span class="rotator-word" id="rotatorWord">Marketing</span></h1>
+  </section>
+
+  <section class="game-section" id="play">
+    <div class="panel" id="panel">
+      <div class="panel-head" id="panelHead">
+        <span class="score">YOU <span id="scoreP">0</span> &nbsp;&ndash;&nbsp; <span id="scoreC">0</span> CPU</span>
+      </div>
+      <div class="stage" id="stage">
+        <div class="welcome" id="welcome">
+          <h2 id="welcomeHeading">Welcome</h2>
+          <p class="welcome-sub" id="welcomeSub"></p>
+          <div class="welcome-actions">
+            <button id="playBtn" type="button">Play</button>
+            <button id="unlimitedBtn" type="button" class="ghost-btn" style="display:none;">..or play again?</button>
+          </div>
+        </div>
+        <canvas id="pong" width="640" height="640"></canvas>
+        <div class="point-msg" id="pauseMsg">Paused</div>
+      </div>
+      <div class="panel-foot">
+        <span id="hint"></span>
+        <button id="pauseBtn" type="button" style="display:none;">Pause</button>
+      </div>
+    </div>
+
+    <div class="contact-section" id="contact">
+      <p class="eyebrow">Contact</p>
+      <div class="contact-box">
+        <div class="contact-box-head">
+          <h2>Get in touch</h2>
+          <button id="playAgainBtn" type="button" class="text-link">Play again</button>
+        </div>
+        <p>Leave a message and I'll get back to you.</p>
+
+        <form id="contactForm">
+          <div class="row2">
+            <div>
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" required autocomplete="name">
+            </div>
+            <div>
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" required autocomplete="email">
+            </div>
+          </div>
+          <div>
+            <label for="message">Message</label>
+            <textarea id="message" name="message" required></textarea>
+          </div>
+          <!-- honeypot field, left empty by humans -->
+          <div class="hp" aria-hidden="true">
+            <label for="company">Company</label>
+            <input type="text" id="company" name="company" tabindex="-1" autocomplete="off">
+          </div>
+          <div class="submit-row">
+            <button class="send" type="submit" id="sendBtn">Send message</button>
+            <span class="status" id="formStatus"></span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>&copy; <span id="year"></span> paalhn</span>
+    <img src="logo.png" alt="">
+  </footer>
+</div>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ---------------- hero word rotator ---------------- */
+const rotatorWords = ['Marketing','Advertising','Programmatic','Data','Automation','Statistics','Coding','Games','Technology','Reach','Impact'];
+let rotatorIndex = 0;
+const rotatorEl = document.getElementById('rotatorWord');
+function cycleRotator(){
+  rotatorEl.classList.add('out');
+  setTimeout(() => {
+    rotatorIndex = (rotatorIndex + 1) % rotatorWords.length;
+    rotatorEl.textContent = rotatorWords[rotatorIndex];
+    rotatorEl.classList.add('jump');
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        rotatorEl.classList.remove('jump');
+        rotatorEl.classList.remove('out');
+      });
+    });
+  }, 400);
+}
+setInterval(cycleRotator, 2000);
+
+/* =========================================================
+   CONFIG — paste your deployed Google Apps Script Web App URL
+   (see apps-script.gs + setup notes)
+   ========================================================= */
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw1AMPajUI8Wp71f-c146msw8mgr5YUo54TPfCPa_ehSgrMuBG0QCmL4PwQTw0MX7s-/exec";
+
+/* ---------------- contact form ---------------- */
+const form = document.getElementById('contactForm');
+const sendBtn = document.getElementById('sendBtn');
+const statusEl = document.getElementById('formStatus');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  statusEl.textContent = '';
+  statusEl.className = 'status';
+
+  if (document.getElementById('company').value) return; // honeypot tripped, silently drop
+
+  if (APPS_SCRIPT_URL.includes('PASTE_YOUR')) {
+    statusEl.textContent = 'Form isn\'t connected yet — see setup notes.';
+    statusEl.className = 'status err';
+    return;
+  }
+
+  const payload = {
+    name: document.getElementById('name').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    message: document.getElementById('message').value.trim()
+  };
+
+  sendBtn.disabled = true;
+  statusEl.textContent = 'Sending…';
+
+  try {
+    // text/plain avoids a CORS preflight against Apps Script
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    statusEl.textContent = 'Thanks — message sent.';
+    statusEl.className = 'status ok';
+    form.reset();
+  } catch (err) {
+    statusEl.textContent = 'Something went wrong. Try again shortly.';
+    statusEl.className = 'status err';
+  } finally {
+    sendBtn.disabled = false;
+  }
+});
+
+/* ---------------- pong ---------------- */
+const canvas = document.getElementById('pong');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+const stage = document.getElementById('stage');
+const panelEl = document.getElementById('panel');
+const panelHead = document.getElementById('panelHead');
+const welcome = document.getElementById('welcome');
+const welcomeHeading = document.getElementById('welcomeHeading');
+const welcomeSub = document.getElementById('welcomeSub');
+const playBtn = document.getElementById('playBtn');
+const unlimitedBtn = document.getElementById('unlimitedBtn');
+const pauseMsg = document.getElementById('pauseMsg');
+const pauseBtn = document.getElementById('pauseBtn');
+const hint = document.getElementById('hint');
+const contactSection = document.getElementById('contact');
+const playAgainBtn = document.getElementById('playAgainBtn');
+
+const PADDLE_W = 12, PADDLE_H = 78, BALL_R = 7, CORNER = 5;
+const NET_GAP = 10; // keeps paddles from crossing the halfway line
+const PLAYER_MIN_X = 8;
+const PLAYER_MAX_X = W/2 - PADDLE_W - NET_GAP;
+const CPU_MIN_X = W/2 + NET_GAP;
+const CPU_MAX_X = W - 18 - PADDLE_W;
+let player = { y: H/2 - PADDLE_H/2, x: 18 };
+let cpu = { y: H/2 - PADDLE_H/2, x: CPU_MAX_X };
+let ball = { x: W/2, y: H/2, vx: 5, vy: 3 };
+let scoreP = 0, scoreC = 0;
+let running = false;    // ball/paddles only move while a round is active
+let paused = false;     // manual pause, independent of round state
+let phase = 'welcome';  // 'welcome' -> 'single' -> 'ended' -> 'unlimited'
+
+function resetBall(dir){
+  ball.x = W/2; ball.y = H/2;
+  ball.vx = 5 * dir;
+  ball.vy = (Math.random() * 4) - 2;
+}
+
+/* ---------------- sound fx (soft synth tones, no audio files) ---------------- */
+let audioCtx = null;
+function ensureAudio(){
+  if(!audioCtx){
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return;
+    audioCtx = new AC();
+  }
+  if(audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playTone(freq, duration, gainPeak, delay){
+  if(!audioCtx) return;
+  const t0 = audioCtx.currentTime + (delay || 0);
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(freq, t0);
+  gain.gain.setValueAtTime(0, t0);
+  gain.gain.linearRampToValueAtTime(gainPeak, t0 + 0.012);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start(t0);
+  osc.stop(t0 + duration + 0.03);
+}
+
+function hitSound(hit){
+  const freq = 470 + (hit || 0) * 70;
+  playTone(freq, 0.11, 0.09, 0);
+}
+
+function goalSound(playerScored){
+  if(playerScored){
+    playTone(392, 0.16, 0.11, 0);      // G4
+    playTone(523.25, 0.26, 0.10, 0.1); // C5 — ascends
+  } else {
+    playTone(392, 0.16, 0.10, 0);      // G4
+    playTone(293.66, 0.28, 0.09, 0.1); // D4 — descends
+  }
+}
+
+function roundRect(x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y);
+  ctx.arcTo(x+w, y, x+w, y+r, r);
+  ctx.lineTo(x+w, y+h-r);
+  ctx.arcTo(x+w, y+h, x+w-r, y+h, r);
+  ctx.lineTo(x+r, y+h);
+  ctx.arcTo(x, y+h, x, y+h-r, r);
+  ctx.lineTo(x, y+r);
+  ctx.arcTo(x, y, x+r, y, r);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+
+  // center dashed line
+  ctx.strokeStyle = '#E9E8E4';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([5,9]);
+  ctx.beginPath();
+  ctx.moveTo(W/2,0); ctx.lineTo(W/2,H);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // paddles — rounded corners
+  ctx.fillStyle = '#1A1A1A';
+  roundRect(player.x, player.y, PADDLE_W, PADDLE_H, CORNER);
+  roundRect(cpu.x, cpu.y, PADDLE_W, PADDLE_H, CORNER);
+
+  // ball
+  ctx.fillStyle = '#1A1A1A';
+  ctx.beginPath();
+  ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI*2);
+  ctx.fill();
+}
+
+function update(){
+  if(!running || paused) return;
+
+  ball.x += ball.vx;
+  ball.y += ball.vy;
+
+  if(ball.y - BALL_R < 0){ ball.y = BALL_R; ball.vy *= -1; }
+  if(ball.y + BALL_R > H){ ball.y = H - BALL_R; ball.vy *= -1; }
+
+  // player paddle collision
+  if(ball.x - BALL_R < player.x + PADDLE_W &&
+     ball.x - BALL_R > player.x - 10 &&
+     ball.y > player.y && ball.y < player.y + PADDLE_H && ball.vx < 0){
+    ball.vx *= -1.06;
+    const hit = (ball.y - (player.y + PADDLE_H/2)) / (PADDLE_H/2);
+    ball.vy = hit * 6;
+    ball.x = player.x + PADDLE_W + BALL_R;
+    hitSound(hit);
+  }
+
+  // cpu paddle collision
+  if(ball.x + BALL_R > cpu.x &&
+     ball.x + BALL_R < cpu.x + 10 &&
+     ball.y > cpu.y && ball.y < cpu.y + PADDLE_H && ball.vx > 0){
+    ball.vx *= -1.06;
+    const hit = (ball.y - (cpu.y + PADDLE_H/2)) / (PADDLE_H/2);
+    ball.vy = hit * 6;
+    ball.x = cpu.x - BALL_R;
+    hitSound(hit);
+  }
+
+  // cpu ai — imperfect tracking, vertical and sideways
+  const target = ball.y - PADDLE_H/2;
+  cpu.y += (target - cpu.y) * 0.085;
+  cpu.y = Math.max(0, Math.min(H - PADDLE_H, cpu.y));
+
+  const cpuTargetX = ball.vx > 0
+    ? CPU_MAX_X - Math.max(0, (ball.x - W/2) / (W/2)) * (CPU_MAX_X - CPU_MIN_X) * 0.4
+    : CPU_MAX_X;
+  cpu.x += (cpuTargetX - cpu.x) * 0.04;
+  cpu.x = Math.max(CPU_MIN_X, Math.min(CPU_MAX_X, cpu.x));
+
+  // scoring
+  if(ball.x < -20){ scoreC++; updateScore(); goalSound(false); onPoint(); }
+  if(ball.x > W + 20){ scoreP++; updateScore(); goalSound(true); onPoint(); }
+
+  // cap speed
+  const speed = Math.hypot(ball.vx, ball.vy);
+  const maxSpeed = 13;
+  if(speed > maxSpeed){
+    ball.vx = (ball.vx/speed) * maxSpeed;
+    ball.vy = (ball.vy/speed) * maxSpeed;
+  }
+}
+
+function updateScore(){
+  document.getElementById('scoreP').textContent = scoreP;
+  document.getElementById('scoreC').textContent = scoreC;
+}
+
+function loop(){
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+
+function setPlayerY(clientY){
+  const rect = canvas.getBoundingClientRect();
+  const scale = H / rect.height;
+  const y = (clientY - rect.top) * scale - PADDLE_H/2;
+  player.y = Math.max(0, Math.min(H - PADDLE_H, y));
+}
+
+canvas.addEventListener('mousemove', (e) => setPlayerY(e.clientY));
+canvas.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+  setPlayerY(e.touches[0].clientY);
+}, { passive:false });
+
+const keys = {};
+window.addEventListener('keydown', (e) => {
+  const tag = e.target && e.target.tagName;
+  if(tag === 'INPUT' || tag === 'TEXTAREA') return; // let normal typing through
+  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','w','s','a','d'].includes(e.key)) e.preventDefault();
+  keys[e.key] = true;
+});
+window.addEventListener('keyup', (e) => {
+  const tag = e.target && e.target.tagName;
+  if(tag === 'INPUT' || tag === 'TEXTAREA') return;
+  keys[e.key] = false;
+});
+setInterval(() => {
+  const speed = 9;
+  if(keys['ArrowUp'] || keys['w']) player.y = Math.max(0, player.y - speed);
+  if(keys['ArrowDown'] || keys['s']) player.y = Math.min(H - PADDLE_H, player.y + speed);
+  if(keys['ArrowLeft'] || keys['a']) player.x = Math.max(PLAYER_MIN_X, player.x - speed);
+  if(keys['ArrowRight'] || keys['d']) player.x = Math.min(PLAYER_MAX_X, player.x + speed);
+}, 16);
+
+/* ---- flow: welcome -> one point -> panel disappears -> contact appears in its place ---- */
+
+function onPoint(){
+  if(phase === 'unlimited'){
+    // continuous play — points no longer stop the game
+    resetBall(Math.random() > 0.5 ? 1 : -1);
+    return;
+  }
+
+  // first-visit single point: the round ends here, replaced by a result screen
+  phase = 'ended';
+  running = false;
+  pauseBtn.style.display = 'none';
+
+  const win = scoreP > scoreC;
+  welcomeHeading.textContent = win ? 'Well done! You win.' : 'Too bad.';
+  welcomeSub.textContent = win ? 'The opportunity to get in touch.' : 'You can still get in touch.';
+  welcomeSub.style.display = 'block';
+  playBtn.textContent = 'Contact';
+  unlimitedBtn.style.display = 'inline-block';
+  unlimitedBtn.classList.add('show');
+
+  canvas.classList.remove('show');
+  welcome.classList.remove('hide');
+}
+
+function hidePanel(){
+  pauseBtn.style.display = 'none';
+  panelEl.classList.add('hide');
+  setTimeout(() => { panelEl.style.display = 'none'; }, 420);
+}
+
+function showPanel(){
+  panelEl.style.display = '';
+  requestAnimationFrame(() => panelEl.classList.remove('hide'));
+}
+
+function hideContact(){
+  contactSection.classList.remove('show');
+  setTimeout(() => contactSection.classList.remove('revealed'), 420);
+}
+
+function revealContact(){
+  if(!contactSection.classList.contains('revealed')){
+    contactSection.classList.add('revealed');
+    requestAnimationFrame(() => contactSection.classList.add('show'));
+  }
+  contactSection.scrollIntoView({ behavior:'smooth', block:'start' });
+  contactSection.classList.add('pulse');
+  setTimeout(() => contactSection.classList.remove('pulse'), 1200);
+}
+
+function startUnlimited(){
+  phase = 'unlimited';
+  scoreP = 0; scoreC = 0; updateScore();
+  panelHead.style.display = 'flex';
+  welcomeHeading.textContent = 'Welcome';
+  welcomeSub.style.display = 'none';
+  welcomeSub.textContent = '';
+  playBtn.textContent = 'Play';
+  unlimitedBtn.style.display = 'none';
+  unlimitedBtn.classList.remove('show');
+  paused = false;
+  pauseBtn.textContent = 'Pause';
+  pauseBtn.style.display = '';
+  welcome.classList.add('hide');
+  canvas.classList.add('show');
+  hint.textContent = 'Unlimited — keep going as long as you like.';
+  resetBall(Math.random() > 0.5 ? 1 : -1);
+  running = true;
+}
+
+playBtn.addEventListener('click', () => {
+  ensureAudio();
+  if(phase === 'welcome'){
+    phase = 'single';
+    welcome.classList.add('hide');
+    canvas.classList.add('show');
+    hint.textContent = 'Mouse/drag to move, arrows or WASD to slide sideways.';
+    pauseBtn.style.display = '';
+    resetBall(Math.random() > 0.5 ? 1 : -1);
+    running = true;
+  } else if(phase === 'ended'){
+    hidePanel();
+    revealContact();
+  }
+});
+
+pauseBtn.addEventListener('click', () => {
+  paused = !paused;
+  pauseBtn.textContent = paused ? 'Resume' : 'Pause';
+  pauseMsg.classList.toggle('show', paused);
+});
+
+unlimitedBtn.addEventListener('click', () => {
+  ensureAudio();
+  startUnlimited();
+});
+
+playAgainBtn.addEventListener('click', () => {
+  ensureAudio();
+  hideContact();
+  setTimeout(() => {
+    showPanel();
+    startUnlimited();
+  }, 450);
+});
+
+document.getElementById('navContact').addEventListener('click', (e) => {
+  e.preventDefault();
+  running = false;
+  if(panelEl.style.display !== 'none'){
+    hidePanel();
+  }
+  revealContact();
+});
+
+// Play button fades in one second after the page is ready
+setTimeout(() => playBtn.classList.add('show'), 1000);
+
+draw();
+loop();
+
+</script>
+
+</body>
+</html>
