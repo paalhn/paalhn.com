@@ -51,8 +51,6 @@
     align-items:center;
     justify-content:space-between;
     padding:40px 0 14px;
-    position:relative;
-    box-shadow: 0 14px 22px -16px rgba(26,26,26,0.22);
   }
   header img{ height:19px; display:block; }
   nav{
@@ -62,33 +60,6 @@
   }
   nav a{ text-decoration:none; color:var(--graphite); transition:color .15s; }
   nav a:hover{ color:var(--ink); }
-
-  /* ---------- hero ---------- */
-  .hero{ padding:18px 0 20px; }
-  .hero h1{
-    font-family:'Space Grotesk', sans-serif;
-    font-weight:500;
-    font-size:clamp(32px, 6vw, 42px);
-    line-height:1.1;
-    margin:0;
-    letter-spacing:-0.01em;
-    min-height:1.1em;
-  }
-  .rotator-word{
-    display:inline-block;
-    opacity:1;
-    transform:translateY(0);
-    transition:opacity .4s ease, transform .4s ease;
-  }
-  .rotator-word.out{
-    opacity:0;
-    transform:translateY(-10px);
-  }
-  .rotator-word.jump{
-    transition:none;
-    opacity:0;
-    transform:translateY(10px);
-  }
 
   /* ---------- section labels ---------- */
   .eyebrow{
@@ -100,7 +71,7 @@
   }
 
   /* ---------- game panel ---------- */
-  .game-section{ padding:0 0 64px; }
+  .game-section{ padding:28px 0 64px; }
   .panel{
     max-width:440px;
     margin:0 auto;
@@ -155,7 +126,7 @@
     color:var(--graphite);
     margin:-16px 0 0;
   }
-  .welcome button{
+  .welcome button:not(.ghost-btn){
     font-family:'Inter', sans-serif;
     font-size:13.5px;
     letter-spacing:0.02em;
@@ -170,8 +141,8 @@
     pointer-events:none;
     transition:opacity .5s ease, transform .5s ease, background-color .15s;
   }
-  .welcome button.show{ opacity:1; transform:translateY(0); pointer-events:auto; }
-  .welcome button:hover{ opacity:0.85 !important; }
+  .welcome button:not(.ghost-btn).show{ opacity:1; transform:translateY(0); pointer-events:auto; }
+  .welcome button:not(.ghost-btn):hover{ opacity:0.85 !important; }
 
   .welcome-actions{
     display:flex;
@@ -181,17 +152,19 @@
   }
   .ghost-btn{
     font-family:'Inter', sans-serif;
-    font-size:12px;
-    letter-spacing:0.02em;
-    background:transparent;
+    font-size:14.5px;
+    letter-spacing:0.01em;
+    background:none;
     color:var(--ink);
-    border:1.5px solid var(--ink);
-    border-radius:9px;
-    padding:8px 16px;
+    border:none;
+    padding:4px 2px;
     cursor:pointer;
-    transition:background-color .15s, opacity .15s;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .3s ease;
   }
-  .ghost-btn:hover{ background:rgba(26,26,26,0.06); }
+  .ghost-btn.show{ opacity:1; pointer-events:auto; }
+  .ghost-btn:hover{ opacity:0.6; }
 
   #pong{
     display:block;
@@ -385,10 +358,6 @@
     </nav>
   </header>
 
-  <section class="hero">
-    <h1><span class="rotator-word" id="rotatorWord">Marketing</span></h1>
-  </section>
-
   <section class="game-section" id="play">
     <div class="panel" id="panel">
       <div class="panel-head" id="panelHead">
@@ -458,26 +427,6 @@
 
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
-
-/* ---------------- hero word rotator ---------------- */
-const rotatorWords = ['Marketing','Advertising','Programmatic','Data','Automation','Statistics','Coding','Games','Technology','Reach','Impact'];
-let rotatorIndex = 0;
-const rotatorEl = document.getElementById('rotatorWord');
-function cycleRotator(){
-  rotatorEl.classList.add('out');
-  setTimeout(() => {
-    rotatorIndex = (rotatorIndex + 1) % rotatorWords.length;
-    rotatorEl.textContent = rotatorWords[rotatorIndex];
-    rotatorEl.classList.add('jump');
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        rotatorEl.classList.remove('jump');
-        rotatorEl.classList.remove('out');
-      });
-    });
-  }, 400);
-}
-setInterval(cycleRotator, 2000);
 
 /* =========================================================
    CONFIG — paste your deployed Google Apps Script Web App URL
