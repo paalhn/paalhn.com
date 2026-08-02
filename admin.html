@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAE1UlEQVRYhcWX32sUVxTHv+eOs4mZbNydkP3hxmRJTJu2SGqEVUJok5KVbsibAWPRin0oBAxoUfpXWH8EVoyigr70sWIqq4LmByaQ2kCxjSIY8mJIBk3YcTVi5p4+uBN2urvJLFj8wrDM2XvO9wN77zl3iZnxMSU+qjuATaUmCCFCAL4CsANAKBteAPAIwIiUcv5/AxBCfFlWVjat6zqqqqpQVlYGAHj79i1M08SLFy8ghNglpfzzgwIIIXoA9Hu93u5gMAhd16FpGvbs2QMAmJycRCaTgaZpWFhYeCiESAE4L6X8baPatN4mFEIoAAYrKir6GxoasGXLFjQ3N2Pv3r1oa2tDJBIBAMzPz+PBgwdIpVKYmZlBOp3Gs2fPkMlkzgP4SUq5UtSEmQs+RFRLRMlwOMyxWIyPHj3KbnXs2DHevXs3b926lYkoSUQNxXzWA0hGIhFOJBJ8+/Zt1+a2RkdHOZFIcG1trQ3hcQ1AREld17mrq4vn5uZKNrdlGAbH43Gurq5mIkq6AiCi71RV5cbGRr5x40bBwqZp8q1bt/j06dN86tQpHh4e5nQ6XXDt3bt3efv27ezxeJiIfnADMBYMBrm3tzevmGVZfPHiRW5tbeWmpiZubGzkaDTK27Zt46amJj579iyvrq7m5fX19XEoFGIimsrz45xTIIT4RFGUJzU1NXj+/Lljs0opceLECaRSKUgpYVnW2qf9SCnR3d2NoaEhKIriyI9EIjAMA6urq19IKf9Z88wx14noicfjWTvfubp06RLu3LlT9DTZunnzJs6dO5cX7+zshKqqEEL8LYQI5wEA+NamPnDggCPZNE1cvnx5Q3Nbg4ODWF5edsQOHjz43lAIAEgUAmhhZliWha6uLkfy2NgYMpmMa4BXr17h3r17jlhbWxssy0L2J/+8EEBQSonDhw/D7/c7kmdnZ12b23r69KnjvaqqCocOHYKUEgCqCwFASmkvcGjTppKHJlRVzYsxc179XIAFIQSuXLmCly9fOhbV1dWVDBCNRh3v6XQaV69etffAmkEuwF9EBEVRcP/+fUdye3s7NE1zba5pGjo7Ox2xiYkJKIoCIgKAmUIAqWwjwvXr1x3JXq8XR44ccQ0wMDAAn8/niF27dg1EZG/C3+34fxvRp0KIx36/H4ZhOApYloWTJ09u2IgSiQSGhoby9k0gEMDS0hIsy9ohpXy09kWBVjyh6zrv27evYCu+cOFC0VZ85syZgq14//799kCadjMLvldVlevq6oqO4VKG0fj4ONfX17OqqkxEP24IkIVI+nw+7ujoYMMwChZ2o9evX3NHRwf7/X734zgLoBJRMhQKcTwe55GRkZLNJycnOR6Pczgcti8kmmuALEQDESWDwSDv3LmTBwYGXJsfP36cW1tb7RGcJKLmoj68/qW0HMAvFRUV/dFoFF6vFy0tLejp6UEsFkMgEAAALC4uYmpqCsPDw5ienoZpmpibm7MvpT9LKc1iHusC5ID0AuivrKz8JhAIwOfzYfPmzWhvbwcAjI+PY2VlBcvLy1hcXIRpmiN4fy3/daPargByQHaVl5f/4ff7UVlZudbv3717h0wmg6WlJbx58yYmpZxyW7MkgCxEPYCvAXwGoCYbNgA8BjAqpSxpdJYM8KH10f8d/wvWSQLa+cDuZwAAAABJRU5ErkJggg==">
 <title>paalhn — messages</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -126,14 +127,23 @@
 
   /* ================= taask tracker ================= */
   :root{
-    --taask-red:#E1574C;
+    --taask-head:#434343;
+    --taask-yellow:#E8C547;
     --taask-green:#2E7D32;
     --taask-green-soft:#E7F4E8;
     --taask-maroon:#8B2E28;
-    --taask-grid:#D8D8D8;
-    --taask-cols: 34px 52px 84px 78px 122px 118px minmax(150px,1.3fr) minmax(150px,1.6fr) 132px 28px;
+    --taask-cancelled:#6B7280;
+    --taask-grid:#E2E2DE;
+    --taask-auto-bg:#F0F0EC;
+    --taask-cols: 30px 56px 84px 76px 122px 118px minmax(160px,1.3fr) minmax(160px,1.5fr) 130px;
   }
   #view-taask{ display:none; }
+  .taask-wrap{
+    width:100%;
+    max-width:1320px;
+    margin:0 auto;
+    padding:56px 24px 80px;
+  }
 
   .taask-settings{
     display:flex;
@@ -174,7 +184,7 @@
 
   .taask-filters{
     display:flex;
-    gap:10px;
+    gap:16px;
     flex-wrap:wrap;
   }
   .taask-filter{ display:flex; flex-direction:column; gap:4px; }
@@ -190,8 +200,16 @@
     padding:6px 8px;
     border:1px solid var(--taask-grid);
     border-radius:3px;
-    min-width:150px;
   }
+  .taask-filter-range{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:12px;
+    color:var(--graphite);
+  }
+  .taask-filter-range input{ min-width:132px; }
+  #taskFilter{ min-width:170px; }
 
   .taask-board{
     border:1px solid var(--ink);
@@ -204,62 +222,53 @@
     align-items:stretch;
   }
   .taask-headrow{
-    background:var(--taask-red);
-    border-bottom:2px solid var(--ink);
+    background:var(--taask-head);
   }
   .taask-headrow > div{
     font-family:'Inter', sans-serif;
-    font-weight:700;
+    font-weight:600;
     font-size:11px;
     letter-spacing:0.03em;
     text-transform:uppercase;
     color:#fff;
-    padding:9px 8px;
-    border-right:1px solid rgba(255,255,255,0.25);
+    padding:7px 8px;
+    display:flex;
+    align-items:center;
   }
-  .taask-headrow > div:first-child{ border-right:none; background:transparent; }
-  .taask-headrow > div:last-child{ border-right:none; }
-  .taask-autofill-label{
-    position:relative;
-  }
-  .taask-autofill-label .auto-tag{
-    position:absolute;
-    top:-15px; left:8px;
-    font-size:9px;
-    font-weight:500;
-    letter-spacing:0.02em;
-    text-transform:none;
-    color:var(--graphite);
-    font-style:italic;
-  }
+  .taask-headrow > div.col-auto{ color:var(--taask-yellow); }
+  .taask-headrow > div.col-center{ justify-content:center; text-align:center; }
 
   .taask-body{
-    max-height:520px;
+    max-height:640px;
     overflow-y:auto;
     scrollbar-gutter:stable;
   }
   .taask-row{
     border-bottom:1px solid var(--taask-grid);
     background:#fff;
+    position:relative;
   }
   .taask-row:hover{ background:#FAFAF8; }
   .taask-row.is-dimmed{ opacity:0.42; }
   .taask-row > div{
-    padding:7px 8px;
-    border-right:1px solid var(--taask-grid);
+    padding:6px 8px;
     font-family:'Inter', sans-serif;
     font-size:13px;
     display:flex;
     align-items:center;
     min-width:0;
   }
-  .taask-row > div:last-child{ border-right:none; }
   .taask-cell-check{
-    border-right:none !important;
     justify-content:center;
     position:relative;
   }
-  .taask-cell-readonly{ color:var(--graphite); font-size:12.5px; }
+  .taask-cell-readonly{
+    color:var(--ink);
+    font-size:12.5px;
+    background:var(--taask-auto-bg);
+    justify-content:center;
+    text-align:center;
+  }
   .taask-row input[type="text"],
   .taask-row input[type="date"]{
     width:100%;
@@ -272,10 +281,11 @@
   }
   .taask-row input[type="text"]:focus,
   .taask-row input[type="date"]:focus{
-    outline:1.5px solid var(--taask-red);
+    outline:1.5px solid var(--taask-head);
     outline-offset:1px;
     background:#fff;
   }
+  .taask-cell-status{ justify-content:center; }
   .taask-row select.status-select{
     width:100%;
     border:1px solid var(--taask-grid);
@@ -286,22 +296,29 @@
     font-size:12px;
     padding:4px 6px;
     cursor:pointer;
+    text-align:center;
+    text-align-last:center;
   }
   select.status-select.st-ongoing{ color:var(--taask-maroon); }
   select.status-select.st-completed{ color:var(--taask-green); }
   select.status-select.st-notstarted{ color:var(--graphite); }
+  select.status-select.st-cancelled{ color:var(--taask-cancelled); font-style:italic; }
 
   .taask-delete{
+    position:absolute;
+    top:50%; right:4px;
+    transform:translateY(-50%);
     background:none; border:none; cursor:pointer;
     color:var(--graphite);
-    font-size:14px;
+    font-size:15px;
+    line-height:1;
     opacity:0;
     transition:opacity .15s;
-    padding:0;
-    width:100%;
+    padding:2px 4px;
+    z-index:2;
   }
   .taask-row:hover .taask-delete{ opacity:1; }
-  .taask-delete:hover{ color:var(--taask-red); }
+  .taask-delete:hover{ color:var(--taask-maroon); }
 
   .taask-check{
     width:18px; height:18px;
@@ -337,19 +354,37 @@
     to{ opacity:0; max-height:0; padding-top:0; padding-bottom:0; }
   }
 
-  .taask-addrow{
-    background:#FAFAF8;
+  .taask-row.is-blank input::placeholder{ color:#B7B5AC; font-style:italic; }
+
+  .taask-addrows{
+    display:block;
+    margin:16px auto 0;
+    font-family:'Inter', sans-serif;
+    font-weight:500;
+    font-size:12.5px;
+    background:#fff;
+    color:var(--ink);
+    border:1px solid var(--taask-grid);
+    border-radius:4px;
+    padding:8px 18px;
+    cursor:pointer;
   }
-  .taask-addrow input{ opacity:0.85; }
-  .taask-addrow input::placeholder{ color:var(--graphite); font-style:italic; }
+  .taask-addrows:hover{ border-color:var(--ink); }
 
   @media (prefers-reduced-motion: reduce){
     .taask-check.pop, .taask-row.flash-complete, .taask-row.fade-out{ animation:none !important; }
   }
 
-  @media (max-width:820px){
-    :root{ --taask-cols: 30px 44px 70px 60px 108px 100px 160px 160px 118px 24px; }
-    .taask-body{ overflow-x:auto; }
+  @media (max-width:1100px){
+    :root{ --taask-cols: 26px 42px 64px 58px 96px 92px minmax(120px,1.2fr) minmax(120px,1.4fr) 108px; }
+    .taask-setting label{ width:auto; }
+    .taask-row > div{ padding:6px 5px; font-size:12px; }
+  }
+  @media (max-width:760px){
+    :root{ --taask-cols: 22px 34px 52px 46px 88px 80px minmax(90px,1.2fr) minmax(90px,1.4fr) 92px; }
+    .taask-row > div{ padding:5px 4px; font-size:11.5px; }
+    .taask-headrow > div{ font-size:9.5px; padding:6px 4px; }
+    select.status-select{ font-size:10.5px; padding:3px 2px; }
   }
 </style>
 </head>
@@ -397,8 +432,10 @@
       <tbody id="rows"></tbody>
     </table>
   </div>
+</div>
 
-  <div id="view-taask">
+<div id="view-taask">
+  <div class="taask-wrap">
     <button class="back-link" id="backBtnTaask" type="button">&larr; Dashboard</button>
 
     <div class="taask-settings">
@@ -423,6 +460,7 @@
         <label for="taaskSort">SORT</label>
         <select id="taaskSort">
           <option value="date">Date</option>
+          <option value="daysleft">Days Left</option>
           <option value="status">Status</option>
           <option value="category">Category</option>
           <option value="task">Task</option>
@@ -431,8 +469,12 @@
 
       <div class="taask-filters">
         <div class="taask-filter">
-          <label for="dateFilter">Date Filter</label>
-          <input type="date" id="dateFilter">
+          <label>Date Filter</label>
+          <div class="taask-filter-range">
+            <input type="date" id="dateFilterFrom" title="From">
+            <span>&ndash;</span>
+            <input type="date" id="dateFilterTo" title="To">
+          </div>
         </div>
         <div class="taask-filter">
           <label for="taskFilter">Task Filter</label>
@@ -444,20 +486,22 @@
     <div class="taask-board">
       <div class="taask-headrow">
         <div></div>
-        <div class="taask-autofill-label"><span class="auto-tag">Autofills</span>Week</div>
-        <div class="taask-autofill-label"><span class="auto-tag">Autofills</span>Weekday</div>
-        <div class="taask-autofill-label"><span class="auto-tag">Autofills</span>Days Left</div>
+        <div class="col-center col-auto">Week</div>
+        <div class="col-center col-auto">Weekday</div>
+        <div class="col-center col-auto">Days Left</div>
         <div>Deadline</div>
         <div>Category</div>
         <div>Task</div>
         <div>Notes</div>
-        <div>Status</div>
-        <div></div>
+        <div class="col-center">Status</div>
       </div>
       <div class="taask-body" id="taaskBody"></div>
     </div>
+
+    <button class="taask-addrows" id="addRowsBtn" type="button">+ Add 10 rows</button>
   </div>
 </div>
+
 
 <script>
 /* Paste the same Apps Script Web App URL used in index.html */
@@ -560,6 +604,7 @@ const viewTaask = document.getElementById('view-taask');
 const taaskBody = document.getElementById('taaskBody');
 let currentTasks = [];
 let taaskLoaded = false;
+let blankCounter = 0;
 
 document.getElementById('tileTaask').addEventListener('click', async () => {
   dashboard.style.display = 'none';
@@ -575,6 +620,15 @@ document.getElementById('backBtnTaask').addEventListener('click', () => {
   dashboard.style.display = 'block';
 });
 
+function makeBlankTask(){
+  blankCounter++;
+  return { id: 'local-' + blankCounter, deadline: '', category: '', task: '', notes: '', status: 'NOT STARTED', saved: false };
+}
+
+function ensureMinRows(min){
+  while (currentTasks.length < min) currentTasks.push(makeBlankTask());
+}
+
 async function fetchTasks(){
   try {
     const res = await fetch(`${APPS_SCRIPT_URL}?key=${encodeURIComponent(currentKey)}&resource=tasks`);
@@ -583,7 +637,8 @@ async function fetchTasks(){
       taaskBody.innerHTML = '<div style="padding:16px;color:var(--graphite);font-size:13px;">Could not load tasks.</div>';
       return;
     }
-    currentTasks = data.tasks || [];
+    currentTasks = (data.tasks || []).map(t => ({ ...t, saved: true }));
+    ensureMinRows(25);
     taaskLoaded = true;
     renderTaask();
   } catch (err) {
@@ -609,18 +664,37 @@ function getISOWeek(date){
   return 1 + Math.round(((d - firstThursday) / 86400000 - 3 + ((firstThursday.getUTCDay() + 6) % 7)) / 7);
 }
 
-function autofillFromDeadline(deadlineStr){
-  if (!deadlineStr) return { week: '–', weekday: '–', daysLeft: '–' };
-  const d = new Date(deadlineStr + 'T00:00:00');
-  if (isNaN(d.getTime())) return { week: '–', weekday: '–', daysLeft: '–' };
+function toDateOnly(value){
+  // handles plain "YYYY-MM-DD" strings as well as Date objects/other date-ish values
+  if (!value) return null;
+  let d;
+  if (value instanceof Date) {
+    d = new Date(value.getFullYear(), value.getMonth(), value.getDate());
+  } else {
+    const s = String(value).slice(0, 10);
+    d = new Date(s + 'T00:00:00');
+  }
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function autofillFromDeadline(deadlineVal){
+  const d = toDateOnly(deadlineVal);
+  if (!d) return { week: '–', weekday: '–', daysLeft: '–', daysLeftNum: null };
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const diffDays = Math.round((d - today) / 86400000);
   return {
     week: getISOWeek(d),
     weekday: d.toLocaleDateString('en-US', { weekday: 'long' }),
-    daysLeft: diffDays
+    daysLeft: diffDays,
+    daysLeftNum: diffDays
   };
+}
+
+function deadlineKey(t){
+  const d = toDateOnly(t.deadline);
+  if (!d) return null;
+  return d.toISOString().slice(0, 10);
 }
 
 /* ---- render ---- */
@@ -628,17 +702,29 @@ function renderTaask(){
   const hideCompleted = document.getElementById('hideCompleted').value === 'ON';
   const dimOngoing = document.getElementById('dimOngoing').value === 'ON';
   const sortBy = document.getElementById('taaskSort').value;
-  const dateFilter = document.getElementById('dateFilter').value;
+  const dateFrom = document.getElementById('dateFilterFrom').value;
+  const dateTo = document.getElementById('dateFilterTo').value;
   const taskFilter = document.getElementById('taskFilter').value.trim().toLowerCase();
 
-  let list = currentTasks.slice();
+  const saved = currentTasks.filter(t => t.saved);
+  const blank = currentTasks.filter(t => !t.saved);
+
+  let list = saved.slice();
 
   if (hideCompleted) list = list.filter(t => (t.status || '').toUpperCase() !== 'COMPLETED');
-  if (dateFilter) list = list.filter(t => t.deadline === dateFilter);
+  if (dateFrom) list = list.filter(t => { const k = deadlineKey(t); return k && k >= dateFrom; });
+  if (dateTo) list = list.filter(t => { const k = deadlineKey(t); return k && k <= dateTo; });
   if (taskFilter) list = list.filter(t => (t.task || '').toLowerCase().includes(taskFilter));
 
   list.sort((a, b) => {
-    if (sortBy === 'date') return (a.deadline || '9999-99-99').localeCompare(b.deadline || '9999-99-99');
+    if (sortBy === 'date') return (deadlineKey(a) || '9999-99-99').localeCompare(deadlineKey(b) || '9999-99-99');
+    if (sortBy === 'daysleft') {
+      const da = autofillFromDeadline(a.deadline).daysLeftNum;
+      const db = autofillFromDeadline(b.deadline).daysLeftNum;
+      const va = da === null ? Infinity : da;
+      const vb = db === null ? Infinity : db;
+      return va - vb;
+    }
     if (sortBy === 'status') return (a.status || '').localeCompare(b.status || '');
     if (sortBy === 'category') return (a.category || '').localeCompare(b.category || '');
     if (sortBy === 'task') return (a.task || '').localeCompare(b.task || '');
@@ -647,21 +733,23 @@ function renderTaask(){
 
   taaskBody.innerHTML = '';
   list.forEach(t => taaskBody.appendChild(buildTaskRow(t, dimOngoing)));
-  taaskBody.appendChild(buildAddRow());
+  blank.forEach(t => taaskBody.appendChild(buildTaskRow(t, dimOngoing)));
 
-  document.getElementById('tileTaaskSub').textContent = `${currentTasks.length} task${currentTasks.length === 1 ? '' : 's'}`;
+  const savedCount = saved.length;
+  document.getElementById('tileTaaskSub').textContent = `${savedCount} task${savedCount === 1 ? '' : 's'}`;
 }
 
 function statusClassFor(status){
   const s = (status || '').toUpperCase();
   if (s === 'COMPLETED') return 'st-completed';
   if (s === 'ONGOING') return 'st-ongoing';
+  if (s === 'CANCELLED') return 'st-cancelled';
   return 'st-notstarted';
 }
 
 function buildTaskRow(task, dimOngoing){
   const row = document.createElement('div');
-  row.className = 'taask-row';
+  row.className = 'taask-row' + (task.saved ? '' : ' is-blank');
   row.dataset.id = task.id;
   const status = (task.status || 'NOT STARTED').toUpperCase();
   if (dimOngoing && status === 'ONGOING') row.classList.add('is-dimmed');
@@ -674,97 +762,84 @@ function buildTaskRow(task, dimOngoing){
     <div class="taask-cell-readonly">${auto.weekday}</div>
     <div class="taask-cell-readonly">${auto.daysLeft}</div>
     <div><input type="date" class="f-deadline" value="${task.deadline || ''}"></div>
-    <div><input type="text" class="f-category" value="${escapeHtml(task.category || '')}" placeholder="—"></div>
-    <div><input type="text" class="f-task" value="${escapeHtml(task.task || '')}" placeholder="Untitled task"></div>
-    <div><input type="text" class="f-notes" value="${escapeHtml(task.notes || '')}" placeholder="—"></div>
-    <div>
+    <div><input type="text" class="f-category" value="${escapeHtml(task.category || '')}" placeholder="Category"></div>
+    <div><input type="text" class="f-task" value="${escapeHtml(task.task || '')}" placeholder="${task.saved ? 'Untitled task' : '+ New task…'}"></div>
+    <div><input type="text" class="f-notes" value="${escapeHtml(task.notes || '')}" placeholder="Notes"></div>
+    <div class="taask-cell-status">
       <select class="status-select ${statusClassFor(status)}">
         <option value="NOT STARTED"${status === 'NOT STARTED' ? ' selected' : ''}>NOT STARTED</option>
         <option value="ONGOING"${status === 'ONGOING' ? ' selected' : ''}>ONGOING</option>
         <option value="COMPLETED"${status === 'COMPLETED' ? ' selected' : ''}>COMPLETED</option>
+        <option value="CANCELLED"${status === 'CANCELLED' ? ' selected' : ''}>CANCELLED</option>
       </select>
     </div>
-    <div><button class="taask-delete" type="button" title="Delete task">&times;</button></div>
+    ${task.saved ? '<button class="taask-delete" type="button" title="Delete task">&times;</button>' : ''}
   `;
 
-  row.querySelector('.f-deadline').addEventListener('change', (e) => updateTaskField(task.id, 'deadline', e.target.value, true));
-  row.querySelector('.f-category').addEventListener('blur', (e) => updateTaskField(task.id, 'category', e.target.value));
-  row.querySelector('.f-task').addEventListener('blur', (e) => updateTaskField(task.id, 'task', e.target.value));
-  row.querySelector('.f-notes').addEventListener('blur', (e) => updateTaskField(task.id, 'notes', e.target.value));
+  row.querySelector('.f-deadline').addEventListener('change', (e) => handleFieldChange(task, 'deadline', e.target.value, row, true));
+  row.querySelector('.f-category').addEventListener('blur', (e) => handleFieldChange(task, 'category', e.target.value, row));
+  row.querySelector('.f-task').addEventListener('blur', (e) => handleFieldChange(task, 'task', e.target.value, row));
+  row.querySelector('.f-notes').addEventListener('blur', (e) => handleFieldChange(task, 'notes', e.target.value, row));
 
-  const statusSelect = row.querySelector('.status-select');
-  statusSelect.addEventListener('change', (e) => handleStatusChange(task.id, e.target.value, row, statusSelect));
-
-  row.querySelector('.taask-delete').addEventListener('click', () => deleteTaskRow(task.id, row));
-
-  return row;
-}
-
-function buildAddRow(){
-  const row = document.createElement('div');
-  row.className = 'taask-row taask-addrow';
-  row.innerHTML = `
-    <div class="taask-cell-check"></div>
-    <div class="taask-cell-readonly">–</div>
-    <div class="taask-cell-readonly">–</div>
-    <div class="taask-cell-readonly">–</div>
-    <div><input type="date" class="new-deadline"></div>
-    <div><input type="text" class="new-category" placeholder="Category"></div>
-    <div><input type="text" class="new-task" placeholder="+ New task… (press Enter)"></div>
-    <div><input type="text" class="new-notes" placeholder="Notes"></div>
-    <div class="taask-cell-readonly">NOT STARTED</div>
-    <div></div>
-  `;
-
-  const taskInput = row.querySelector('.new-task');
-  taskInput.addEventListener('keydown', async (e) => {
-    if (e.key !== 'Enter' || !taskInput.value.trim()) return;
-    const payload = {
-      action: 'addTask',
-      deadline: row.querySelector('.new-deadline').value,
-      category: row.querySelector('.new-category').value,
-      task: taskInput.value.trim(),
-      notes: row.querySelector('.new-notes').value,
-      status: 'NOT STARTED'
-    };
-    taskInput.disabled = true;
-    try {
-      const result = await taaskApi(payload);
-      if (result.ok) {
-        currentTasks.push({
-          id: result.id,
-          deadline: payload.deadline,
-          category: payload.category,
-          task: payload.task,
-          notes: payload.notes,
-          status: 'NOT STARTED'
-        });
-        renderTaask();
-      }
-    } finally {
-      taskInput.disabled = false;
-    }
+  row.querySelector('.f-task').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') e.target.blur();
   });
 
+  const statusSelect = row.querySelector('.status-select');
+  statusSelect.addEventListener('change', (e) => handleStatusChange(task, e.target.value, row, statusSelect));
+
+  const deleteBtn = row.querySelector('.taask-delete');
+  if (deleteBtn) deleteBtn.addEventListener('click', () => deleteTaskRow(task.id, row));
+
   return row;
 }
 
-async function updateTaskField(id, field, value, refresh){
-  const t = currentTasks.find(x => x.id === id);
-  if (!t || t[field] === value) return;
-  t[field] = value;
-  await taaskApi({ action: 'updateTask', id, [field]: value });
+/* ---- field edits: promotes a blank row to a saved task on first meaningful edit ---- */
+async function handleFieldChange(task, field, value, rowEl, refresh){
+  if (task[field] === value) { if (refresh) renderTaask(); return; }
+  task[field] = value;
+
+  if (!task.saved) {
+    if (!task.task || !task.task.trim()) {
+      if (refresh) renderTaask();
+      return; // don't save a row until it at least has a task name
+    }
+    const result = await taaskApi({
+      action: 'addTask',
+      deadline: task.deadline,
+      category: task.category,
+      task: task.task,
+      notes: task.notes,
+      status: task.status
+    });
+    if (result.ok) {
+      task.id = result.id;
+      task.saved = true;
+      ensureMinRows(currentTasks.filter(t => t.saved).length + 5);
+    }
+    renderTaask();
+    return;
+  }
+
+  await taaskApi({ action: 'updateTask', id: task.id, [field]: value });
   if (refresh) renderTaask();
 }
 
-async function handleStatusChange(id, newStatus, rowEl, selectEl){
-  const t = currentTasks.find(x => x.id === id);
-  if (!t) return;
-  const prevStatus = (t.status || '').toUpperCase();
-  t.status = newStatus;
+async function handleStatusChange(task, newStatus, rowEl, selectEl){
+  const prevStatus = (task.status || '').toUpperCase();
+  task.status = newStatus;
   selectEl.className = 'status-select ' + statusClassFor(newStatus);
 
-  await taaskApi({ action: 'updateTask', id, status: newStatus });
+  if (!task.saved) {
+    if (!task.task || !task.task.trim()) return; // nothing to save yet
+    const result = await taaskApi({
+      action: 'addTask',
+      deadline: task.deadline, category: task.category, task: task.task, notes: task.notes, status: newStatus
+    });
+    if (result.ok) { task.id = result.id; task.saved = true; }
+  } else {
+    await taaskApi({ action: 'updateTask', id: task.id, status: newStatus });
+  }
 
   if (newStatus === 'COMPLETED' && prevStatus !== 'COMPLETED') {
     const checkEl = rowEl.querySelector('.taask-check');
@@ -789,8 +864,14 @@ async function deleteTaskRow(id, rowEl){
   rowEl.classList.add('fade-out');
   await taaskApi({ action: 'deleteTask', id });
   currentTasks = currentTasks.filter(t => t.id !== id);
+  ensureMinRows(25);
   setTimeout(renderTaask, 460);
 }
+
+document.getElementById('addRowsBtn').addEventListener('click', () => {
+  for (let i = 0; i < 10; i++) currentTasks.push(makeBlankTask());
+  renderTaask();
+});
 
 /* ---- happy completion chime (Web Audio, no files) ---- */
 let taaskAudioCtx = null;
@@ -823,7 +904,8 @@ function playHappyChime(){
 ['hideCompleted', 'dimOngoing', 'taaskSort'].forEach(id => {
   document.getElementById(id).addEventListener('change', renderTaask);
 });
-document.getElementById('dateFilter').addEventListener('change', renderTaask);
+document.getElementById('dateFilterFrom').addEventListener('change', renderTaask);
+document.getElementById('dateFilterTo').addEventListener('change', renderTaask);
 document.getElementById('taskFilter').addEventListener('input', renderTaask);
 </script>
 </body>
