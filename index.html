@@ -497,7 +497,7 @@ const hint = document.getElementById('hint');
 const contactSection = document.getElementById('contact');
 const playAgainBtn = document.getElementById('playAgainBtn');
 
-const PADDLE_W = 12, PADDLE_H = 78, BALL_R = 7, CORNER = 5;
+const PADDLE_W = 12, PADDLE_H = 78, BALL_R = 9, CORNER = 5;
 const NET_GAP = 10; // keeps paddles from crossing the halfway line
 const PLAYER_MIN_X = 8;
 const PLAYER_MAX_X = W/2 - PADDLE_W - NET_GAP;
@@ -590,10 +590,16 @@ function draw(){
   roundRect(player.x, player.y, PADDLE_W, PADDLE_H, CORNER);
   roundRect(cpu.x, cpu.y, PADDLE_W, PADDLE_H, CORNER);
 
-  // ball
+  // ball — matches the site icon: outer ring with a filled center dot
+  ctx.strokeStyle = '#1A1A1A';
+  ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  ctx.arc(ball.x, ball.y, BALL_R - 0.8, 0, Math.PI*2);
+  ctx.stroke();
+
   ctx.fillStyle = '#1A1A1A';
   ctx.beginPath();
-  ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI*2);
+  ctx.arc(ball.x, ball.y, BALL_R * 0.42, 0, Math.PI*2);
   ctx.fill();
 }
 

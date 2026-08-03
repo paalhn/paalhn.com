@@ -17,9 +17,8 @@
     margin:0; min-height:100vh;
     background:var(--paper); color:var(--ink);
     font-family:'Inter', sans-serif;
-    display:flex; align-items:flex-start; justify-content:center;
   }
-  .wrap{ width:100%; max-width:820px; padding:56px 24px; }
+  .wrap{ width:100%; max-width:820px; margin:0 auto; padding:56px 24px; }
   h1{
     font-family:'Space Grotesk', sans-serif;
     font-weight:500;
@@ -128,14 +127,14 @@
   /* ================= taask tracker ================= */
   :root{
     --taask-head:#434343;
-    --taask-yellow:#E8C547;
     --taask-green:#2E7D32;
     --taask-green-soft:#E7F4E8;
     --taask-maroon:#8B2E28;
     --taask-cancelled:#6B7280;
     --taask-grid:#E2E2DE;
     --taask-auto-bg:#F0F0EC;
-    --taask-cols: 30px 56px 84px 76px 122px 118px minmax(160px,1.3fr) minmax(160px,1.5fr) 130px;
+    --taask-cols: 42px 50px 76px 70px 104px 104px minmax(150px,1.3fr) minmax(150px,1.5fr) 116px;
+    --taask-zoom: 1;
   }
   #view-taask{ display:none; }
   .taask-wrap{
@@ -151,40 +150,50 @@
     justify-content:space-between;
     flex-wrap:wrap;
     gap:20px 32px;
-    margin-bottom:16px;
+    margin-bottom:22px;
   }
   .taask-settings-left{ display:flex; flex-direction:column; gap:8px; }
-  .taask-setting{ display:flex; align-items:center; gap:10px; }
-  .taask-setting label{
+  .taask-settings-mid{ display:flex; flex-direction:column; gap:8px; }
+
+  /* toggle-pill style controls */
+  .taask-pill{
+    display:flex;
+    align-items:center;
+    border-radius:4px;
+    overflow:hidden;
+    border:1px solid transparent;
+  }
+  .taask-pill-label{
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size:12px;
+    color:#fff;
+    background:var(--taask-head);
+    padding:7px 12px;
+    white-space:nowrap;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .taask-pill select{
+    appearance:none;
+    -webkit-appearance:none;
     font-family:'Inter', sans-serif;
     font-weight:500;
     font-size:12.5px;
     color:var(--ink);
-    width:110px;
+    background:#fff url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2210%22 height=%226%22 viewBox=%220 0 10 6%22%3E%3Cpath d=%22M1 1l4 4 4-4%22 stroke=%22%23434343%22 stroke-width=%221.4%22 fill=%22none%22/%3E%3C/svg%3E') no-repeat right 10px center;
+    border:none;
+    padding:7px 26px 7px 12px;
+    min-width:110px;
+    cursor:pointer;
   }
-  .taask-setting select{
-    font-family:'Inter', sans-serif;
-    font-size:12.5px;
-    padding:5px 8px;
-    border:1px solid var(--taask-grid);
-    border-radius:3px;
-    background:#fff;
-    color:var(--ink);
-  }
-  .taask-sort{ display:flex; align-items:center; gap:10px; }
-  .taask-sort label{ font-family:'Inter', sans-serif; font-weight:500; font-size:12.5px; color:var(--ink); }
-  .taask-sort select{
-    font-family:'Inter', sans-serif;
-    font-size:12.5px;
-    padding:5px 8px;
-    border:1px solid var(--taask-grid);
-    border-radius:3px;
-    background:#fff;
-  }
+  .taask-pill.pill-zoom .taask-pill-label{ background:#2864C4; }
+  .taask-pill.pill-sort .taask-pill-label{ background:#2E7D32; }
 
   .taask-filters{
     display:flex;
-    gap:16px;
+    gap:18px;
     flex-wrap:wrap;
   }
   .taask-filter{ display:flex; flex-direction:column; gap:4px; }
@@ -208,10 +217,31 @@
     font-size:12px;
     color:var(--graphite);
   }
-  .taask-filter-range input{ min-width:132px; }
+  .taask-filter-range input{ min-width:120px; }
   #taskFilter{ min-width:170px; }
 
-  .taask-board{
+  /* ---- outer 3-col layout: checkmark gutter | table | delete gutter ---- */
+  .taask-outer{
+    display:grid;
+    grid-template-columns:34px 1fr 34px;
+    align-items:start;
+    zoom:var(--taask-zoom);
+  }
+  .taask-tagrow{
+    display:grid;
+    grid-template-columns:var(--taask-cols);
+    margin-bottom:2px;
+  }
+  .taask-tagrow span{
+    font-family:'Inter', sans-serif;
+    font-size:9px;
+    font-weight:600;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--graphite);
+  }
+
+  .taask-table{
     border:1px solid var(--ink);
     border-radius:4px;
     overflow:hidden;
@@ -221,21 +251,26 @@
     grid-template-columns:var(--taask-cols);
     align-items:stretch;
   }
-  .taask-headrow{
-    background:var(--taask-head);
-  }
   .taask-headrow > div{
     font-family:'Inter', sans-serif;
     font-weight:600;
-    font-size:11px;
-    letter-spacing:0.03em;
+    font-size:10px;
+    letter-spacing:0.02em;
     text-transform:uppercase;
     color:#fff;
-    padding:7px 8px;
+    background:var(--taask-head);
+    padding:6px 6px;
     display:flex;
     align-items:center;
+    white-space:nowrap;
   }
-  .taask-headrow > div.col-auto{ color:var(--taask-yellow); }
+  .taask-headrow > div.col-auto{
+    color:var(--ink) !important;
+    background:#fff !important;
+  }
+  .taask-headrow > div.col-auto:last-of-type{
+    border-right:1px solid var(--ink);
+  }
   .taask-headrow > div.col-center{ justify-content:center; text-align:center; }
 
   .taask-body{
@@ -246,36 +281,41 @@
   .taask-row{
     border-bottom:1px solid var(--taask-grid);
     background:#fff;
-    position:relative;
   }
   .taask-row:hover{ background:#FAFAF8; }
   .taask-row.is-dimmed{ opacity:0.42; }
   .taask-row > div{
-    padding:6px 8px;
+    padding:5px 6px;
     font-family:'Inter', sans-serif;
-    font-size:13px;
+    font-size:12px;
     display:flex;
     align-items:center;
     min-width:0;
   }
-  .taask-cell-check{
-    justify-content:center;
-    position:relative;
-  }
-  .taask-cell-readonly{
+  .taask-cell-id{
     color:var(--ink);
-    font-size:12.5px;
+    font-size:11.5px;
+    font-weight:600;
     background:var(--taask-auto-bg);
     justify-content:center;
     text-align:center;
   }
+  .taask-cell-readonly{
+    color:var(--ink);
+    font-size:11.5px;
+    background:var(--taask-auto-bg);
+    justify-content:center;
+    text-align:center;
+  }
+  .taask-cell-readonly:last-of-type{ border-right:1px solid var(--taask-grid); }
+
   .taask-row input[type="text"],
   .taask-row input[type="date"]{
     width:100%;
     border:none;
     background:transparent;
     font-family:'Inter', sans-serif;
-    font-size:13px;
+    font-size:12px;
     color:var(--ink);
     padding:2px;
   }
@@ -285,6 +325,20 @@
     outline-offset:1px;
     background:#fff;
   }
+  .taask-cell-deadline{ position:relative; justify-content:center; }
+  .taask-cell-deadline input[type="date"]{ text-align:center; }
+  .taask-cell-deadline input[type="date"].is-empty{ color:transparent; }
+  .taask-cell-deadline .deadline-tag{
+    position:absolute;
+    left:0; right:18px; top:0; bottom:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Inter', sans-serif;
+    font-size:12px;
+    color:#B7B5AC;
+    font-style:italic;
+    pointer-events:none;
+  }
+
   .taask-cell-status{ justify-content:center; }
   .taask-row select.status-select{
     width:100%;
@@ -293,8 +347,8 @@
     background:#fff;
     font-family:'Inter', sans-serif;
     font-weight:700;
-    font-size:12px;
-    padding:4px 6px;
+    font-size:11px;
+    padding:3px 4px;
     cursor:pointer;
     text-align:center;
     text-align-last:center;
@@ -304,27 +358,20 @@
   select.status-select.st-notstarted{ color:var(--graphite); }
   select.status-select.st-cancelled{ color:var(--taask-cancelled); font-style:italic; }
 
-  .taask-delete{
-    position:absolute;
-    top:50%; right:4px;
-    transform:translateY(-50%);
-    background:none; border:none; cursor:pointer;
-    color:var(--graphite);
-    font-size:15px;
-    line-height:1;
-    opacity:0;
-    transition:opacity .15s;
-    padding:2px 4px;
-    z-index:2;
+  /* left/right gutters: checkmark + delete, truly outside the table box */
+  .taask-gutter{ display:flex; flex-direction:column; }
+  .taask-gutter .gutter-spacer{ flex:none; }
+  .taask-gutter .gutter-cell{
+    flex:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
   }
-  .taask-row:hover .taask-delete{ opacity:1; }
-  .taask-delete:hover{ color:var(--taask-maroon); }
 
   .taask-check{
-    width:18px; height:18px;
     color:var(--taask-green);
     font-weight:700;
-    font-size:15px;
+    font-size:14px;
     opacity:0;
     transform:scale(0.3);
   }
@@ -356,6 +403,15 @@
 
   .taask-row.is-blank input::placeholder{ color:#B7B5AC; font-style:italic; }
 
+  .taask-delete{
+    background:none; border:none; cursor:pointer;
+    color:transparent;
+    font-size:14px;
+    line-height:1;
+    padding:2px;
+  }
+  .gutter-cell:hover .taask-delete{ color:var(--taask-maroon); }
+
   .taask-addrows{
     display:block;
     margin:16px auto 0;
@@ -376,15 +432,14 @@
   }
 
   @media (max-width:1100px){
-    :root{ --taask-cols: 26px 42px 64px 58px 96px 92px minmax(120px,1.2fr) minmax(120px,1.4fr) 108px; }
-    .taask-setting label{ width:auto; }
-    .taask-row > div{ padding:6px 5px; font-size:12px; }
+    :root{ --taask-cols: 34px 40px 60px 54px 88px 84px minmax(120px,1.2fr) minmax(120px,1.4fr) 100px; }
+    .taask-row > div, .taask-headrow > div{ padding:5px 4px; font-size:11px; }
   }
   @media (max-width:760px){
-    :root{ --taask-cols: 22px 34px 52px 46px 88px 80px minmax(90px,1.2fr) minmax(90px,1.4fr) 92px; }
-    .taask-row > div{ padding:5px 4px; font-size:11.5px; }
-    .taask-headrow > div{ font-size:9.5px; padding:6px 4px; }
-    select.status-select{ font-size:10.5px; padding:3px 2px; }
+    :root{ --taask-cols: 28px 32px 48px 42px 76px 68px minmax(90px,1.2fr) minmax(90px,1.4fr) 86px; }
+    .taask-row > div{ padding:4px 3px; font-size:10.5px; }
+    .taask-headrow > div{ font-size:9px; padding:5px 3px; }
+    select.status-select{ font-size:9.5px; padding:3px 2px; }
   }
 </style>
 </head>
@@ -440,15 +495,15 @@
 
     <div class="taask-settings">
       <div class="taask-settings-left">
-        <div class="taask-setting">
-          <label for="hideCompleted">Hide Completed</label>
+        <div class="taask-pill">
+          <span class="taask-pill-label">Hide Completed</span>
           <select id="hideCompleted">
             <option value="OFF">OFF</option>
             <option value="ON">ON</option>
           </select>
         </div>
-        <div class="taask-setting">
-          <label for="dimOngoing">Dim Ongoing</label>
+        <div class="taask-pill">
+          <span class="taask-pill-label">Dim Ongoing</span>
           <select id="dimOngoing">
             <option value="OFF">OFF</option>
             <option value="ON">ON</option>
@@ -456,15 +511,26 @@
         </div>
       </div>
 
-      <div class="taask-sort">
-        <label for="taaskSort">SORT</label>
-        <select id="taaskSort">
-          <option value="date">Date</option>
-          <option value="daysleft">Days Left</option>
-          <option value="status">Status</option>
-          <option value="category">Category</option>
-          <option value="task">Task</option>
-        </select>
+      <div class="taask-settings-mid">
+        <div class="taask-pill pill-zoom">
+          <span class="taask-pill-label">&#128269; Zoom</span>
+          <select id="taaskZoom">
+            <option value="0.85">85%</option>
+            <option value="1" selected>100%</option>
+            <option value="1.15">115%</option>
+            <option value="1.3">130%</option>
+          </select>
+        </div>
+        <div class="taask-pill pill-sort">
+          <span class="taask-pill-label">Sort</span>
+          <select id="taaskSort">
+            <option value="date">Date</option>
+            <option value="daysleft">Days Left</option>
+            <option value="status">Status</option>
+            <option value="category">Category</option>
+            <option value="task">Task</option>
+          </select>
+        </div>
       </div>
 
       <div class="taask-filters">
@@ -483,19 +549,33 @@
       </div>
     </div>
 
-    <div class="taask-board">
-      <div class="taask-headrow">
-        <div></div>
-        <div class="col-center col-auto">Week</div>
-        <div class="col-center col-auto">Weekday</div>
-        <div class="col-center col-auto">Days Left</div>
-        <div>Deadline</div>
-        <div>Category</div>
-        <div>Task</div>
-        <div>Notes</div>
-        <div class="col-center">Status</div>
+    <div class="taask-outer" id="taaskOuter">
+      <div class="taask-gutter" id="gutterLeft"></div>
+
+      <div>
+        <div class="taask-tagrow">
+          <span></span>
+          <span>Autofills</span>
+          <span>Autofills</span>
+          <span>Autofills</span>
+        </div>
+        <div class="taask-table">
+          <div class="taask-headrow">
+            <div class="col-center">#</div>
+            <div class="col-center col-auto">Week</div>
+            <div class="col-center col-auto">Weekday</div>
+            <div class="col-center col-auto">Days Left</div>
+            <div class="col-center">Deadline</div>
+            <div>Category</div>
+            <div>Task</div>
+            <div>Notes</div>
+            <div class="col-center">Status</div>
+          </div>
+          <div class="taask-body" id="taaskBody"></div>
+        </div>
       </div>
-      <div class="taask-body" id="taaskBody"></div>
+
+      <div class="taask-gutter" id="gutterRight"></div>
     </div>
 
     <button class="taask-addrows" id="addRowsBtn" type="button">+ Add 10 rows</button>
@@ -602,6 +682,8 @@ document.getElementById('csvBtn').addEventListener('click', () => {
    ================================================================ */
 const viewTaask = document.getElementById('view-taask');
 const taaskBody = document.getElementById('taaskBody');
+const gutterLeft = document.getElementById('gutterLeft');
+const gutterRight = document.getElementById('gutterRight');
 let currentTasks = [];
 let taaskLoaded = false;
 let blankCounter = 0;
@@ -665,7 +747,6 @@ function getISOWeek(date){
 }
 
 function toDateOnly(value){
-  // handles plain "YYYY-MM-DD" strings as well as Date objects/other date-ish values
   if (!value) return null;
   let d;
   if (value instanceof Date) {
@@ -702,16 +783,23 @@ function renderTaask(){
   const hideCompleted = document.getElementById('hideCompleted').value === 'ON';
   const dimOngoing = document.getElementById('dimOngoing').value === 'ON';
   const sortBy = document.getElementById('taaskSort').value;
+  const zoomVal = document.getElementById('taaskZoom').value;
   const dateFrom = document.getElementById('dateFilterFrom').value;
   const dateTo = document.getElementById('dateFilterTo').value;
   const taskFilter = document.getElementById('taskFilter').value.trim().toLowerCase();
+
+  document.getElementById('taaskOuter').style.setProperty('--taask-zoom', zoomVal);
+
+  const filtersActive = !!(dateFrom || dateTo || taskFilter);
 
   const saved = currentTasks.filter(t => t.saved);
   const blank = currentTasks.filter(t => !t.saved);
 
   let list = saved.slice();
 
-  if (hideCompleted) list = list.filter(t => (t.status || '').toUpperCase() !== 'COMPLETED');
+  // a row mid-completion animation stays visible for its grace window even if
+  // Hide Completed is on, so the checkmark/flash/sound always gets to play
+  if (hideCompleted) list = list.filter(t => t._justCompleted || (t.status || '').trim().toUpperCase() !== 'COMPLETED');
   if (dateFrom) list = list.filter(t => { const k = deadlineKey(t); return k && k >= dateFrom; });
   if (dateTo) list = list.filter(t => { const k = deadlineKey(t); return k && k <= dateTo; });
   if (taskFilter) list = list.filter(t => (t.task || '').toLowerCase().includes(taskFilter));
@@ -731,12 +819,61 @@ function renderTaask(){
     return 0;
   });
 
+  // blank entry rows are only shown when nothing is being actively filtered/searched
+  const finalList = filtersActive ? list : list.concat(blank);
+
   taaskBody.innerHTML = '';
-  list.forEach(t => taaskBody.appendChild(buildTaskRow(t, dimOngoing)));
-  blank.forEach(t => taaskBody.appendChild(buildTaskRow(t, dimOngoing)));
+  gutterLeft.innerHTML = '';
+  gutterRight.innerHTML = '';
+
+  finalList.forEach((t, i) => {
+    const displayId = i + 1;
+    taaskBody.appendChild(buildTaskRow(t, dimOngoing, displayId));
+    gutterLeft.appendChild(buildCheckGutterCell(t));
+    gutterRight.appendChild(buildDeleteGutterCell(t));
+  });
+
+  alignGutters();
 
   const savedCount = saved.length;
   document.getElementById('tileTaaskSub').textContent = `${savedCount} task${savedCount === 1 ? '' : 's'}`;
+}
+
+function alignGutters(){
+  requestAnimationFrame(() => {
+    const tagrow = document.querySelector('.taask-tagrow');
+    const headrow = document.querySelector('.taask-headrow');
+    const spacerHeight = (tagrow ? tagrow.offsetHeight : 0) + (headrow ? headrow.offsetHeight : 0);
+    [gutterLeft, gutterRight].forEach(g => {
+      let spacer = g.querySelector('.gutter-spacer');
+      if (!spacer) {
+        spacer = document.createElement('div');
+        spacer.className = 'gutter-spacer';
+        g.insertBefore(spacer, g.firstChild);
+      }
+      spacer.style.height = spacerHeight + 'px';
+    });
+  });
+}
+
+function buildCheckGutterCell(task){
+  const cell = document.createElement('div');
+  cell.className = 'gutter-cell';
+  cell.dataset.id = task.id;
+  const status = (task.status || 'NOT STARTED').toUpperCase();
+  cell.innerHTML = `<span class="taask-check ${status === 'COMPLETED' ? 'show' : ''}">&#10004;</span>`;
+  return cell;
+}
+
+function buildDeleteGutterCell(task){
+  const cell = document.createElement('div');
+  cell.className = 'gutter-cell';
+  cell.dataset.id = task.id;
+  if (task.saved) {
+    cell.innerHTML = '<button class="taask-delete" type="button" title="Delete task">&times;</button>';
+    cell.querySelector('.taask-delete').addEventListener('click', () => deleteTaskRow(task.id));
+  }
+  return cell;
 }
 
 function statusClassFor(status){
@@ -747,7 +884,7 @@ function statusClassFor(status){
   return 'st-notstarted';
 }
 
-function buildTaskRow(task, dimOngoing){
+function buildTaskRow(task, dimOngoing, displayId){
   const row = document.createElement('div');
   row.className = 'taask-row' + (task.saved ? '' : ' is-blank');
   row.dataset.id = task.id;
@@ -755,13 +892,17 @@ function buildTaskRow(task, dimOngoing){
   if (dimOngoing && status === 'ONGOING') row.classList.add('is-dimmed');
 
   const auto = autofillFromDeadline(task.deadline);
+  const hasDeadline = !!task.deadline;
 
   row.innerHTML = `
-    <div class="taask-cell-check"><span class="taask-check ${status === 'COMPLETED' ? 'show' : ''}">&#10003;</span></div>
+    <div class="taask-cell-id">${displayId}</div>
     <div class="taask-cell-readonly">${auto.week}</div>
     <div class="taask-cell-readonly">${auto.weekday}</div>
     <div class="taask-cell-readonly">${auto.daysLeft}</div>
-    <div><input type="date" class="f-deadline" value="${task.deadline || ''}"></div>
+    <div class="taask-cell-deadline">
+      <input type="date" class="f-deadline ${hasDeadline ? '' : 'is-empty'}" value="${task.deadline || ''}">
+      ${hasDeadline ? '' : '<span class="deadline-tag">Date</span>'}
+    </div>
     <div><input type="text" class="f-category" value="${escapeHtml(task.category || '')}" placeholder="Category"></div>
     <div><input type="text" class="f-task" value="${escapeHtml(task.task || '')}" placeholder="${task.saved ? 'Untitled task' : '+ New task…'}"></div>
     <div><input type="text" class="f-notes" value="${escapeHtml(task.notes || '')}" placeholder="Notes"></div>
@@ -773,7 +914,6 @@ function buildTaskRow(task, dimOngoing){
         <option value="CANCELLED"${status === 'CANCELLED' ? ' selected' : ''}>CANCELLED</option>
       </select>
     </div>
-    ${task.saved ? '<button class="taask-delete" type="button" title="Delete task">&times;</button>' : ''}
   `;
 
   row.querySelector('.f-deadline').addEventListener('change', (e) => handleFieldChange(task, 'deadline', e.target.value, row, true));
@@ -787,9 +927,6 @@ function buildTaskRow(task, dimOngoing){
 
   const statusSelect = row.querySelector('.status-select');
   statusSelect.addEventListener('change', (e) => handleStatusChange(task, e.target.value, row, statusSelect));
-
-  const deleteBtn = row.querySelector('.taask-delete');
-  if (deleteBtn) deleteBtn.addEventListener('click', () => deleteTaskRow(task.id, row));
 
   return row;
 }
@@ -842,26 +979,30 @@ async function handleStatusChange(task, newStatus, rowEl, selectEl){
   }
 
   if (newStatus === 'COMPLETED' && prevStatus !== 'COMPLETED') {
-    const checkEl = rowEl.querySelector('.taask-check');
-    checkEl.classList.add('show', 'pop');
+    task._justCompleted = true;
+
+    const checkEl = gutterLeft.querySelector(`.gutter-cell[data-id="${task.id}"] .taask-check`);
+    if (checkEl) { checkEl.classList.add('show', 'pop'); }
     rowEl.classList.add('flash-complete');
     playHappyChime();
 
     const hideCompleted = document.getElementById('hideCompleted').value === 'ON';
     if (hideCompleted) {
       setTimeout(() => {
-        rowEl.classList.add('fade-out');
-        setTimeout(renderTaask, 480);
+        task._justCompleted = false;
+        renderTaask();
       }, 900);
     }
   } else if (newStatus !== 'COMPLETED') {
-    const checkEl = rowEl.querySelector('.taask-check');
-    checkEl.classList.remove('show', 'pop');
+    task._justCompleted = false;
+    const checkEl = gutterLeft.querySelector(`.gutter-cell[data-id="${task.id}"] .taask-check`);
+    if (checkEl) checkEl.classList.remove('show', 'pop');
   }
 }
 
-async function deleteTaskRow(id, rowEl){
-  rowEl.classList.add('fade-out');
+async function deleteTaskRow(id){
+  const rowEl = taaskBody.querySelector(`.taask-row[data-id="${id}"]`);
+  if (rowEl) rowEl.classList.add('fade-out');
   await taaskApi({ action: 'deleteTask', id });
   currentTasks = currentTasks.filter(t => t.id !== id);
   ensureMinRows(25);
@@ -900,13 +1041,14 @@ function playHappyChime(){
   } catch (err) { /* audio not available — fail silently */ }
 }
 
-/* ---- settings/filter/sort wiring ---- */
-['hideCompleted', 'dimOngoing', 'taaskSort'].forEach(id => {
+/* ---- settings/filter/sort/zoom wiring ---- */
+['hideCompleted', 'dimOngoing', 'taaskSort', 'taaskZoom'].forEach(id => {
   document.getElementById(id).addEventListener('change', renderTaask);
 });
 document.getElementById('dateFilterFrom').addEventListener('change', renderTaask);
 document.getElementById('dateFilterTo').addEventListener('change', renderTaask);
 document.getElementById('taskFilter').addEventListener('input', renderTaask);
+window.addEventListener('resize', () => { if (taaskLoaded) alignGutters(); });
 </script>
 </body>
 </html>
