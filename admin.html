@@ -132,6 +132,7 @@
     --taask-maroon:#8B2E28;
     --taask-cancelled:#6B7280;
     --taask-grid:#E2E2DE;
+    --taask-border:#D3D1C6;
     --taask-auto-bg:#F0F0EC;
     --taask-cols: 42px 50px 76px 70px 104px 104px minmax(150px,1.3fr) minmax(150px,1.5fr) 116px;
     --taask-zoom: 1;
@@ -151,6 +152,12 @@
     flex-wrap:wrap;
     gap:20px 32px;
     margin-bottom:22px;
+    margin-left:34px;
+    padding:10px 0 14px;
+    position:sticky;
+    top:0;
+    z-index:40;
+    background:var(--paper);
   }
   .taask-settings-left{ display:flex; flex-direction:column; gap:8px; }
   .taask-settings-mid{ display:flex; flex-direction:column; gap:8px; }
@@ -161,7 +168,7 @@
     align-items:center;
     border-radius:4px;
     overflow:hidden;
-    border:1px solid transparent;
+    border:1px solid var(--taask-border);
   }
   .taask-pill-label{
     font-family:'Inter', sans-serif;
@@ -188,7 +195,9 @@
     min-width:110px;
     cursor:pointer;
   }
+  .taask-pill.pill-zoom{ border-color:#2864C4; }
   .taask-pill.pill-zoom .taask-pill-label{ background:#2864C4; }
+  .taask-pill.pill-sort{ border-color:#2E7D32; }
   .taask-pill.pill-sort .taask-pill-label{ background:#2E7D32; }
 
   .taask-filters{
@@ -207,7 +216,7 @@
     font-family:'Inter', sans-serif;
     font-size:12.5px;
     padding:6px 8px;
-    border:1px solid var(--taask-grid);
+    border:1px solid var(--taask-border);
     border-radius:3px;
   }
   .taask-filter-range{
@@ -220,10 +229,10 @@
   .taask-filter-range input{ min-width:120px; }
   #taskFilter{ min-width:170px; }
 
-  /* ---- outer 3-col layout: checkmark gutter | table | delete gutter ---- */
+  /* ---- outer 2-col layout: checkmark gutter | table ---- */
   .taask-outer{
     display:grid;
-    grid-template-columns:34px 1fr 34px;
+    grid-template-columns:34px 1fr;
     align-items:start;
     zoom:var(--taask-zoom);
   }
@@ -231,6 +240,9 @@
     display:grid;
     grid-template-columns:var(--taask-cols);
     margin-bottom:2px;
+    position:sticky;
+    z-index:32;
+    background:var(--paper);
   }
   .taask-tagrow span{
     font-family:'Inter', sans-serif;
@@ -244,12 +256,15 @@
   .taask-table{
     border:1px solid var(--ink);
     border-radius:4px;
-    overflow:hidden;
   }
   .taask-headrow, .taask-row{
     display:grid;
     grid-template-columns:var(--taask-cols);
     align-items:stretch;
+  }
+  .taask-headrow{
+    position:sticky;
+    z-index:31;
   }
   .taask-headrow > div{
     font-family:'Inter', sans-serif;
@@ -264,6 +279,7 @@
     align-items:center;
     white-space:nowrap;
   }
+  .taask-headrow > div:first-child{ border-top-left-radius:3px; }
   .taask-headrow > div.col-auto{
     color:var(--ink) !important;
     background:#fff !important;
@@ -273,17 +289,15 @@
   }
   .taask-headrow > div.col-center{ justify-content:center; text-align:center; }
 
-  .taask-body{
-    max-height:640px;
-    overflow-y:auto;
-    scrollbar-gutter:stable;
-  }
   .taask-row{
     border-bottom:1px solid var(--taask-grid);
     background:#fff;
   }
   .taask-row:hover{ background:#FAFAF8; }
   .taask-row.is-dimmed{ opacity:0.42; }
+  .taask-row.dragging{ opacity:0.35; }
+  .taask-row.drag-over{ border-top:2px solid var(--taask-head); }
+  .taask-row[draggable="true"]{ cursor:grab; }
   .taask-row > div{
     padding:5px 6px;
     font-family:'Inter', sans-serif;
@@ -326,8 +340,10 @@
     background:#fff;
   }
   .taask-cell-deadline{ position:relative; justify-content:center; }
-  .taask-cell-deadline input[type="date"]{ text-align:center; }
-  .taask-cell-deadline input[type="date"].is-empty{ color:transparent; }
+  .taask-cell-deadline input[type="date"]{ text-align:center; color:var(--ink); }
+  .taask-cell-deadline input[type="date"].is-empty:not(:focus){ color:transparent; }
+  .taask-cell-deadline input[type="date"]:focus{ color:var(--ink) !important; }
+  .taask-cell-deadline input:focus ~ .deadline-tag{ display:none; }
   .taask-cell-deadline .deadline-tag{
     position:absolute;
     left:0; right:18px; top:0; bottom:0;
@@ -358,14 +374,20 @@
   select.status-select.st-notstarted{ color:var(--graphite); }
   select.status-select.st-cancelled{ color:var(--taask-cancelled); font-style:italic; }
 
-  /* left/right gutters: checkmark + delete, truly outside the table box */
+  /* left gutter: checkmark, truly outside the table box, scrolls naturally with the page */
   .taask-gutter{ display:flex; flex-direction:column; }
-  .taask-gutter .gutter-spacer{ flex:none; }
+  .taask-gutter .gutter-spacer{
+    flex:none;
+    position:sticky;
+    z-index:30;
+    background:var(--paper);
+  }
   .taask-gutter .gutter-cell{
     flex:none;
     display:flex;
     align-items:center;
     justify-content:center;
+    min-height:26px;
   }
 
   .taask-check{
@@ -403,29 +425,26 @@
 
   .taask-row.is-blank input::placeholder{ color:#B7B5AC; font-style:italic; }
 
-  .taask-delete{
-    background:none; border:none; cursor:pointer;
-    color:transparent;
-    font-size:14px;
-    line-height:1;
-    padding:2px;
+  .taask-rowactions{
+    display:flex;
+    gap:10px;
+    margin:16px 0 0 34px;
   }
-  .gutter-cell:hover .taask-delete{ color:var(--taask-maroon); }
-
-  .taask-addrows{
+  .taask-addrows, .taask-delrow{
     display:block;
-    margin:16px auto 0;
     font-family:'Inter', sans-serif;
     font-weight:500;
     font-size:12.5px;
     background:#fff;
     color:var(--ink);
-    border:1px solid var(--taask-grid);
+    border:1px solid var(--taask-border);
     border-radius:4px;
     padding:8px 18px;
     cursor:pointer;
   }
-  .taask-addrows:hover{ border-color:var(--ink); }
+  .taask-addrows:hover, .taask-delrow:hover{ border-color:var(--ink); }
+  .taask-delrow:disabled{ opacity:0.4; cursor:default; }
+  .taask-delrow:disabled:hover{ border-color:var(--taask-border); }
 
   @media (prefers-reduced-motion: reduce){
     .taask-check.pop, .taask-row.flash-complete, .taask-row.fade-out{ animation:none !important; }
@@ -440,6 +459,8 @@
     .taask-row > div{ padding:4px 3px; font-size:10.5px; }
     .taask-headrow > div{ font-size:9px; padding:5px 3px; }
     select.status-select{ font-size:9.5px; padding:3px 2px; }
+    .taask-settings{ margin-left:0; }
+    .taask-rowactions{ margin-left:0; }
   }
 </style>
 </head>
@@ -529,6 +550,7 @@
             <option value="status">Status</option>
             <option value="category">Category</option>
             <option value="task">Task</option>
+            <option value="manual">Manual (drag to reorder)</option>
           </select>
         </div>
       </div>
@@ -561,7 +583,7 @@
         </div>
         <div class="taask-table">
           <div class="taask-headrow">
-            <div class="col-center">#</div>
+            <div class="col-center col-auto">#</div>
             <div class="col-center col-auto">Week</div>
             <div class="col-center col-auto">Weekday</div>
             <div class="col-center col-auto">Days Left</div>
@@ -574,19 +596,17 @@
           <div class="taask-body" id="taaskBody"></div>
         </div>
       </div>
-
-      <div class="taask-gutter" id="gutterRight"></div>
     </div>
 
-    <button class="taask-addrows" id="addRowsBtn" type="button">+ Add 10 rows</button>
+    <div class="taask-rowactions">
+      <button class="taask-addrows" id="addRowsBtn" type="button">+ Add 1 row</button>
+      <button class="taask-delrow" id="delRowBtn" type="button">Delete 1 row</button>
+    </div>
   </div>
 </div>
 
-
+<script src="config.js"></script>
 <script>
-/* Paste the same Apps Script Web App URL used in index.html */
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw1AMPajUI8Wp71f-c146msw8mgr5YUo54TPfCPa_ehSgrMuBG0QCmL4PwQTw0MX7s-/exec";
-
 const gate = document.getElementById('gate');
 const dashboard = document.getElementById('dashboard');
 const app = document.getElementById('app');
@@ -683,10 +703,10 @@ document.getElementById('csvBtn').addEventListener('click', () => {
 const viewTaask = document.getElementById('view-taask');
 const taaskBody = document.getElementById('taaskBody');
 const gutterLeft = document.getElementById('gutterLeft');
-const gutterRight = document.getElementById('gutterRight');
 let currentTasks = [];
 let taaskLoaded = false;
 let blankCounter = 0;
+let dragSrcId = null;
 
 document.getElementById('tileTaask').addEventListener('click', async () => {
   dashboard.style.display = 'none';
@@ -804,55 +824,64 @@ function renderTaask(){
   if (dateTo) list = list.filter(t => { const k = deadlineKey(t); return k && k <= dateTo; });
   if (taskFilter) list = list.filter(t => (t.task || '').toLowerCase().includes(taskFilter));
 
-  list.sort((a, b) => {
-    if (sortBy === 'date') return (deadlineKey(a) || '9999-99-99').localeCompare(deadlineKey(b) || '9999-99-99');
-    if (sortBy === 'daysleft') {
-      const da = autofillFromDeadline(a.deadline).daysLeftNum;
-      const db = autofillFromDeadline(b.deadline).daysLeftNum;
-      const va = da === null ? Infinity : da;
-      const vb = db === null ? Infinity : db;
-      return va - vb;
-    }
-    if (sortBy === 'status') return (a.status || '').localeCompare(b.status || '');
-    if (sortBy === 'category') return (a.category || '').localeCompare(b.category || '');
-    if (sortBy === 'task') return (a.task || '').localeCompare(b.task || '');
-    return 0;
-  });
+  if (sortBy !== 'manual') {
+    list.sort((a, b) => {
+      if (sortBy === 'date') return (deadlineKey(a) || '9999-99-99').localeCompare(deadlineKey(b) || '9999-99-99');
+      if (sortBy === 'daysleft') {
+        const da = autofillFromDeadline(a.deadline).daysLeftNum;
+        const db = autofillFromDeadline(b.deadline).daysLeftNum;
+        const va = da === null ? Infinity : da;
+        const vb = db === null ? Infinity : db;
+        return va - vb;
+      }
+      if (sortBy === 'status') return (a.status || '').localeCompare(b.status || '');
+      if (sortBy === 'category') return (a.category || '').localeCompare(b.category || '');
+      if (sortBy === 'task') return (a.task || '').localeCompare(b.task || '');
+      return 0;
+    });
+  }
+  // sortBy === 'manual' → keep currentTasks' existing order (drag-and-drop sets this)
 
   // blank entry rows are only shown when nothing is being actively filtered/searched
   const finalList = filtersActive ? list : list.concat(blank);
 
   taaskBody.innerHTML = '';
   gutterLeft.innerHTML = '';
-  gutterRight.innerHTML = '';
 
   finalList.forEach((t, i) => {
     const displayId = i + 1;
     taaskBody.appendChild(buildTaskRow(t, dimOngoing, displayId));
     gutterLeft.appendChild(buildCheckGutterCell(t));
-    gutterRight.appendChild(buildDeleteGutterCell(t));
   });
 
   alignGutters();
 
   const savedCount = saved.length;
+  const hasBlank = blank.length > 0;
   document.getElementById('tileTaaskSub').textContent = `${savedCount} task${savedCount === 1 ? '' : 's'}`;
+  document.getElementById('delRowBtn').disabled = !hasBlank;
 }
 
 function alignGutters(){
   requestAnimationFrame(() => {
+    const settings = document.querySelector('.taask-settings');
     const tagrow = document.querySelector('.taask-tagrow');
     const headrow = document.querySelector('.taask-headrow');
-    const spacerHeight = (tagrow ? tagrow.offsetHeight : 0) + (headrow ? headrow.offsetHeight : 0);
-    [gutterLeft, gutterRight].forEach(g => {
-      let spacer = g.querySelector('.gutter-spacer');
-      if (!spacer) {
-        spacer = document.createElement('div');
-        spacer.className = 'gutter-spacer';
-        g.insertBefore(spacer, g.firstChild);
-      }
-      spacer.style.height = spacerHeight + 'px';
-    });
+    const settingsH = settings ? settings.offsetHeight : 0;
+    const tagrowH = tagrow ? tagrow.offsetHeight : 0;
+    const headrowH = headrow ? headrow.offsetHeight : 0;
+
+    if (tagrow) tagrow.style.top = settingsH + 'px';
+    if (headrow) headrow.style.top = (settingsH + tagrowH) + 'px';
+
+    let spacer = gutterLeft.querySelector('.gutter-spacer');
+    if (!spacer) {
+      spacer = document.createElement('div');
+      spacer.className = 'gutter-spacer';
+      gutterLeft.insertBefore(spacer, gutterLeft.firstChild);
+    }
+    spacer.style.top = settingsH + 'px';
+    spacer.style.height = (tagrowH + headrowH) + 'px';
   });
 }
 
@@ -862,17 +891,6 @@ function buildCheckGutterCell(task){
   cell.dataset.id = task.id;
   const status = (task.status || 'NOT STARTED').toUpperCase();
   cell.innerHTML = `<span class="taask-check ${status === 'COMPLETED' ? 'show' : ''}">&#10004;</span>`;
-  return cell;
-}
-
-function buildDeleteGutterCell(task){
-  const cell = document.createElement('div');
-  cell.className = 'gutter-cell';
-  cell.dataset.id = task.id;
-  if (task.saved) {
-    cell.innerHTML = '<button class="taask-delete" type="button" title="Delete task">&times;</button>';
-    cell.querySelector('.taask-delete').addEventListener('click', () => deleteTaskRow(task.id));
-  }
   return cell;
 }
 
@@ -928,6 +946,34 @@ function buildTaskRow(task, dimOngoing, displayId){
   const statusSelect = row.querySelector('.status-select');
   statusSelect.addEventListener('change', (e) => handleStatusChange(task, e.target.value, row, statusSelect));
 
+  // drag-and-drop reordering — only saved rows are draggable
+  if (task.saved) {
+    row.draggable = true;
+    row.addEventListener('dragstart', () => {
+      dragSrcId = task.id;
+      row.classList.add('dragging');
+    });
+    row.addEventListener('dragend', () => row.classList.remove('dragging'));
+    row.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      row.classList.add('drag-over');
+    });
+    row.addEventListener('dragleave', () => row.classList.remove('drag-over'));
+    row.addEventListener('drop', (e) => {
+      e.preventDefault();
+      row.classList.remove('drag-over');
+      if (!dragSrcId || dragSrcId === task.id) return;
+      const fromIdx = currentTasks.findIndex(t => t.id === dragSrcId);
+      const toIdx = currentTasks.findIndex(t => t.id === task.id);
+      if (fromIdx === -1 || toIdx === -1) return;
+      const [moved] = currentTasks.splice(fromIdx, 1);
+      currentTasks.splice(toIdx, 0, moved);
+      dragSrcId = null;
+      document.getElementById('taaskSort').value = 'manual';
+      renderTaask();
+    });
+  }
+
   return row;
 }
 
@@ -962,6 +1008,15 @@ async function handleFieldChange(task, field, value, rowEl, refresh){
   if (refresh) renderTaask();
 }
 
+/*
+ * Hide Completed logic: when a task's status changes to COMPLETED, the row
+ * always plays the checkmark pop + green flash + chime, regardless of the
+ * Hide Completed setting. If Hide Completed is ON, the row is additionally
+ * marked _justCompleted so it survives one grace window (900ms) — long enough
+ * for the animation to finish — before a re-render filters it out for real.
+ * Toggling Hide Completed OFF at any time simply stops excluding COMPLETED
+ * rows from the render list, so previously-hidden tasks reappear immediately.
+ */
 async function handleStatusChange(task, newStatus, rowEl, selectEl){
   const prevStatus = (task.status || '').toUpperCase();
   task.status = newStatus;
@@ -979,8 +1034,6 @@ async function handleStatusChange(task, newStatus, rowEl, selectEl){
   }
 
   if (newStatus === 'COMPLETED' && prevStatus !== 'COMPLETED') {
-    task._justCompleted = true;
-
     const checkEl = gutterLeft.querySelector(`.gutter-cell[data-id="${task.id}"] .taask-check`);
     if (checkEl) { checkEl.classList.add('show', 'pop'); }
     rowEl.classList.add('flash-complete');
@@ -988,6 +1041,9 @@ async function handleStatusChange(task, newStatus, rowEl, selectEl){
 
     const hideCompleted = document.getElementById('hideCompleted').value === 'ON';
     if (hideCompleted) {
+      // _justCompleted is ONLY ever set alongside its own clearing timeout,
+      // so it can never get stuck true and permanently bypass the filter.
+      task._justCompleted = true;
       setTimeout(() => {
         task._justCompleted = false;
         renderTaask();
@@ -1000,18 +1056,20 @@ async function handleStatusChange(task, newStatus, rowEl, selectEl){
   }
 }
 
-async function deleteTaskRow(id){
-  const rowEl = taaskBody.querySelector(`.taask-row[data-id="${id}"]`);
-  if (rowEl) rowEl.classList.add('fade-out');
-  await taaskApi({ action: 'deleteTask', id });
-  currentTasks = currentTasks.filter(t => t.id !== id);
-  ensureMinRows(25);
-  setTimeout(renderTaask, 460);
-}
-
 document.getElementById('addRowsBtn').addEventListener('click', () => {
-  for (let i = 0; i < 10; i++) currentTasks.push(makeBlankTask());
+  currentTasks.push(makeBlankTask());
   renderTaask();
+});
+
+document.getElementById('delRowBtn').addEventListener('click', () => {
+  // only ever removes an empty/unsaved row — never touches real task data
+  for (let i = currentTasks.length - 1; i >= 0; i--) {
+    if (!currentTasks[i].saved) {
+      currentTasks.splice(i, 1);
+      renderTaask();
+      return;
+    }
+  }
 });
 
 /* ---- happy completion chime (Web Audio, no files) ---- */
@@ -1049,6 +1107,5 @@ document.getElementById('dateFilterFrom').addEventListener('change', renderTaask
 document.getElementById('dateFilterTo').addEventListener('change', renderTaask);
 document.getElementById('taskFilter').addEventListener('input', renderTaask);
 window.addEventListener('resize', () => { if (taaskLoaded) alignGutters(); });
-</script>
-</body>
+</script></body>
 </html>
