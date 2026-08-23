@@ -238,18 +238,26 @@
   .taask-tagrow{
     display:grid;
     grid-template-columns:var(--taask-cols);
-    margin-bottom:2px;
+    margin-bottom:0;
     position:sticky;
     z-index:32;
     background:var(--paper);
   }
-  .taask-tagrow span{
+  .taask-tagrow .autofill-label{
+    grid-column: 1 / 6;
+    border:1px solid var(--ink);
+    border-bottom:none;
+    border-top-left-radius:4px;
+    border-top-right-radius:4px;
+    text-align:center;
+    padding:4px 0;
     font-family:'Inter', sans-serif;
-    font-size:9px;
+    font-size:9.5px;
     font-weight:600;
     letter-spacing:0.06em;
     text-transform:uppercase;
     color:var(--graphite);
+    background:var(--paper);
   }
 
   .taask-table{
@@ -306,7 +314,7 @@
     align-items:center;
     min-width:0;
   }
-  .taask-cell-check{ justify-content:center; }
+  .taask-cell-check{ justify-content:center; background:var(--taask-auto-bg); }
   .taask-cell-id{
     color:var(--ink);
     font-size:11.5px;
@@ -341,19 +349,33 @@
     background:#fff;
   }
   .taask-cell-deadline{ position:relative; justify-content:center; }
-  .taask-cell-deadline input[type="date"]{ text-align:center; color:var(--ink); }
-  .taask-cell-deadline input[type="date"].is-empty:not(:focus){ color:transparent; }
+  .taask-cell-deadline input[type="date"]{
+    text-align:center;
+    color:transparent;
+    position:relative;
+  }
   .taask-cell-deadline input[type="date"]:focus{ color:var(--ink) !important; }
+  .taask-cell-deadline input[type="date"]::-webkit-calendar-picker-indicator{
+    position:absolute;
+    left:0; top:0;
+    width:100%; height:100%;
+    opacity:0;
+    margin:0; padding:0;
+    cursor:pointer;
+  }
   .taask-cell-deadline input:focus ~ .deadline-tag{ display:none; }
   .taask-cell-deadline .deadline-tag{
     position:absolute;
-    left:0; right:18px; top:0; bottom:0;
+    left:0; right:0; top:0; bottom:0;
     display:flex; align-items:center; justify-content:center;
     font-family:'Inter', sans-serif;
     font-size:12px;
+    color:var(--ink);
+    pointer-events:none;
+  }
+  .taask-cell-deadline .deadline-tag.is-empty{
     color:#B7B5AC;
     font-style:italic;
-    pointer-events:none;
   }
 
   .taask-cell-status{ justify-content:center; }
@@ -443,6 +465,20 @@
   }
   .taask-savestatus.show{ opacity:1; }
 
+  .taask-error-banner{
+    display:none;
+    background:#F8E4DE;
+    color:#8B2E28;
+    border:1px solid #E0B4A8;
+    border-radius:4px;
+    padding:10px 14px;
+    margin-bottom:16px;
+    font-family:'Inter', monospace;
+    font-size:12.5px;
+    white-space:pre-wrap;
+  }
+  .taask-error-banner.show{ display:block; }
+
   @media (prefers-reduced-motion: reduce){
     .taask-check.pop, .taask-row.flash-complete, .taask-row.fade-out{ animation:none !important; }
   }
@@ -507,6 +543,7 @@
 
 <div id="view-taask">
   <div class="taask-wrap">
+    <div id="taaskErrorBanner" class="taask-error-banner"></div>
     <button class="back-link" id="backBtnTaask" type="button">&larr; Dashboard</button>
 
     <div class="taask-settings">
@@ -529,7 +566,7 @@
 
       <div class="taask-settings-mid">
         <div class="taask-pill pill-zoom">
-          <span class="taask-pill-label">&#128269; Zoom</span>
+          <span class="taask-pill-label">Zoom</span>
           <select id="taaskZoom">
             <option value="0.85">85%</option>
             <option value="1" selected>100%</option>
@@ -568,15 +605,11 @@
 
     <div class="taask-zoomwrap" id="taaskOuter">
       <div class="taask-tagrow">
-        <span></span>
-        <span></span>
-        <span>Autofills</span>
-        <span>Autofills</span>
-        <span>Autofills</span>
+        <span class="autofill-label">Autofills</span>
       </div>
       <div class="taask-table">
         <div class="taask-headrow">
-          <div></div>
+          <div class="col-center col-auto">&#10004;</div>
           <div class="col-center col-auto">#</div>
           <div class="col-center col-auto">Week</div>
           <div class="col-center col-auto">Weekday</div>
@@ -696,6 +729,14 @@ document.getElementById('csvBtn').addEventListener('click', () => {
 /* ================================================================
    taask — task tracker
    ================================================================ */
+window.addEventListener('error', (e) => {
+  const banner = document.getElementById('taaskErrorBanner');
+  if (banner) {
+    banner.textContent = 'Error: ' + e.message + '  (' + (e.filename || '').split('/').pop() + ':' + e.lineno + ')';
+    banner.classList.add('show');
+  }
+});
+
 const viewTaask = document.getElementById('view-taask');
 const taaskBody = document.getElementById('taaskBody');
 let currentTasks = [];
@@ -787,6 +828,16 @@ function autofillFromDeadline(deadlineVal){
     daysLeft: diffDays,
     daysLeftNum: diffDays
   };
+}
+
+// "Jul 6, 26" — short month, no leading zero on the day, 2-digit year
+function formatDeadlineDisplay(deadlineVal){
+  const d = toDateOnly(deadlineVal);
+  if (!d) return '';
+  const month = d.toLocaleDateString('en-US', { month: 'short' });
+  const day = d.getDate();
+  const year = String(d.getFullYear()).slice(-2);
+  return `${month} ${day}, ${year}`;
 }
 
 // Builds a local "YYYY-MM-DD" key without ever converting through UTC —
@@ -892,6 +943,7 @@ function buildTaskRow(task, dimOngoing, displayId){
 
   const auto = autofillFromDeadline(task.deadline);
   const hasDeadline = !!task.deadline;
+  const deadlineDisplay = hasDeadline ? formatDeadlineDisplay(task.deadline) : 'Date';
 
   row.innerHTML = `
     <div class="taask-cell-check"><span class="taask-check ${status === 'COMPLETED' ? 'show' : ''}">&#10004;</span></div>
@@ -900,8 +952,8 @@ function buildTaskRow(task, dimOngoing, displayId){
     <div class="taask-cell-readonly">${auto.weekday}</div>
     <div class="taask-cell-readonly">${auto.daysLeft}</div>
     <div class="taask-cell-deadline">
-      <input type="date" class="f-deadline ${hasDeadline ? '' : 'is-empty'}" value="${task.deadline || ''}">
-      ${hasDeadline ? '' : '<span class="deadline-tag">Date</span>'}
+      <input type="date" class="f-deadline" value="${task.deadline || ''}">
+      <span class="deadline-tag ${hasDeadline ? '' : 'is-empty'}">${deadlineDisplay}</span>
     </div>
     <div><input type="text" class="f-category" value="${escapeHtml(task.category || '')}" placeholder="Category"></div>
     <div><input type="text" class="f-task" value="${escapeHtml(task.task || '')}" placeholder="${task.saved ? 'Untitled task' : '+ New task…'}"></div>
@@ -920,10 +972,6 @@ function buildTaskRow(task, dimOngoing, displayId){
   row.querySelector('.f-category').addEventListener('blur', (e) => handleFieldChange(task, 'category', e.target.value, row));
   row.querySelector('.f-task').addEventListener('blur', (e) => handleFieldChange(task, 'task', e.target.value, row));
   row.querySelector('.f-notes').addEventListener('blur', (e) => handleFieldChange(task, 'notes', e.target.value, row));
-
-  row.querySelector('.f-task').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') e.target.blur();
-  });
 
   const statusSelect = row.querySelector('.status-select');
   statusSelect.addEventListener('change', (e) => handleStatusChange(task, e.target.value, row, statusSelect));
@@ -1124,6 +1172,32 @@ function playHappyChime(){
     });
   } catch (err) { /* audio not available — fail silently */ }
 }
+
+/* ---- keyboard navigation: Enter moves down a row, Shift+Enter moves right ---- */
+const NAV_FIELD_ORDER = ['f-deadline', 'f-category', 'f-task', 'f-notes', 'status-select'];
+
+taaskBody.addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter') return;
+  const target = e.target;
+  const fieldClass = NAV_FIELD_ORDER.find(c => target.classList.contains(c));
+  if (!fieldClass) return;
+  e.preventDefault();
+
+  const currentRow = target.closest('.taask-row');
+  if (!currentRow) return;
+
+  if (e.shiftKey) {
+    // Shift+Enter — move east to the next field in the same row
+    const nextClass = NAV_FIELD_ORDER[NAV_FIELD_ORDER.indexOf(fieldClass) + 1];
+    const nextField = nextClass ? currentRow.querySelector('.' + nextClass) : null;
+    if (nextField) nextField.focus();
+  } else {
+    // Enter — move down to the same field in the next row
+    const nextRow = currentRow.nextElementSibling;
+    const nextField = nextRow ? nextRow.querySelector('.' + fieldClass) : null;
+    if (nextField) nextField.focus();
+  }
+});
 
 /* ---- settings/filter/sort/zoom wiring ---- */
 ['hideCompleted', 'dimOngoing', 'taaskSort', 'taaskZoom'].forEach(id => {
